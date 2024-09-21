@@ -14,3 +14,4 @@ thiserror = { workspace = true }
 color-eyre = { workspace = true }
 eyre = { workspace = true }
 aoc_common = { path = "../common" }
+memchr = { workspace = true }

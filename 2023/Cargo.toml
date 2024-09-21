@@ -1,5 +1,5 @@
 [package]
-name = "name_of_my_app"
+name = "aoc_2023"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -13,3 +13,4 @@ tracing-subscriber = { workspace = true }
 thiserror = { workspace = true }
 color-eyre = { workspace = true }
 eyre = { workspace = true }
+aoc_common = { path = "../common" }

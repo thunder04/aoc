@@ -18,7 +18,7 @@ pub fn run() -> color_eyre::Result<()> {
     Ok(())
 }
 
-// Answer: ???
+// Answer: 2545
 fn part_1(input: &str) -> u32 {
     let mut sum = 0_u32;
 
@@ -51,7 +51,7 @@ fn part_1(input: &str) -> u32 {
     sum
 }
 
-// Answer: ???
+// Answer: 78111
 fn part_2(input: &str) -> u32 {
     let mut sum = 0_u32;
 

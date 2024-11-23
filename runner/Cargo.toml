@@ -13,6 +13,5 @@ tracing-subscriber = { workspace = true }
 thiserror = { workspace = true }
 color-eyre = { workspace = true }
 eyre = { workspace = true }
-aoc_common = { path = "../common" }
 aoc_solutions = { path = "../solutions" }
 memchr = { workspace = true }

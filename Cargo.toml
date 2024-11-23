@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["runner", "common", "solutions"]
+members = ["runner", "solutions"]
 default-members = ["runner"]
 
 [workspace.dependencies]

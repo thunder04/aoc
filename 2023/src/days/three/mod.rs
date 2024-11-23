@@ -175,8 +175,8 @@ fn find_digit_indexes(line: &[u8], idx: usize) -> (usize, usize) {
     }
 
     // Go right until you encounter a dot, or reach the last element.
-    for i in idx + 1..line.len() {
-        if line[i].is_ascii_digit() {
+    for (i, char) in line.iter().enumerate().skip(idx + 1) {
+        if char.is_ascii_digit() {
             end = i;
         } else {
             break;
@@ -198,7 +198,7 @@ const fn simple_parse_digit(line: &[u8], (start, end): (usize, usize)) -> u16 {
         1 => (((line[end - 1] - b'0') * 10) + (line[end] - b'0')) as u16,
         0 => (line[end] - b'0') as u16,
 
-        #[allow(unconditional_panic)]
+        #[allow(unconditional_panic, clippy::out_of_bounds_indexing)]
         _ => [][0], // The number matched was in range [1000, +inf)
     }
 }

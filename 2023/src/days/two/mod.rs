@@ -4,25 +4,15 @@ const MAX_R_CUBES: u8 = 12;
 const MAX_G_CUBES: u8 = 13;
 const MAX_B_CUBES: u8 = 14;
 
-pub fn run() -> color_eyre::Result<()> {
-    info!(
-        "[Part 1] The sum of the IDs of those games is: {}",
-        part_1(INPUT)
-    );
-
-    info!(
-        "[Part 2] The sum of the power of these sets is: {}",
-        part_2(INPUT)
-    );
-
-    Ok(())
+pub fn run() -> super::Runner {
+    (Some(part_1), Some(part_2))
 }
 
 // Answer: 2545
-fn part_1(input: &str) -> u32 {
+fn part_1() -> u32 {
     let mut sum = 0_u32;
 
-    'game: for (game_id, line) in input.lines().enumerate() {
+    'game: for (game_id, line) in INPUT.lines().enumerate() {
         let Some((_, line)) = line.split_once(": ") else {
             break;
         };
@@ -52,10 +42,10 @@ fn part_1(input: &str) -> u32 {
 }
 
 // Answer: 78111
-fn part_2(input: &str) -> u32 {
+fn part_2() -> u32 {
     let mut sum = 0_u32;
 
-    for line in input.lines() {
+    for line in INPUT.lines() {
         let Some((_, line)) = line.split_once(": ") else {
             break;
         };

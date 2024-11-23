@@ -26,6 +26,9 @@ macro_rules! export_day {
     ($($id: literal: $name: literal, $day_mod: ident)*) => {
         $(mod $day_mod;)*
 
+        pub type Runner = (Option<Solution>, Option<Solution>);
+        pub type Solution = fn() -> u32;
+
         pub fn run() -> eyre::Result<()> {
             const AVAILABLE_DAYS: &[&'static str] = &[$($name),*];
 
@@ -34,7 +37,7 @@ macro_rules! export_day {
             };
 
             match &*day {
-                $(stringify!($id) => $day_mod::run(),)*
+                $(stringify!($id) => return _run($id, $day_mod::run()),)*
 
                 _ => {
                     return Err(
@@ -46,6 +49,18 @@ macro_rules! export_day {
                         }),
                     )
                 }
+            }
+
+            pub fn _run(id: u8, (part_1, part_2): Runner) -> eyre::Result<()> {
+                if let Some(part_1) = part_1 {
+                    info!("Day {id}, part 1's answer is \"{}\".", (part_1)());
+                }
+
+                if let Some(part_2) = part_2 {
+                    info!("Day {id}, part 2's answer is \"{}\".", (part_2)());
+                }
+
+                Ok(())
             }
         }
     };

@@ -2,25 +2,15 @@ use std::collections::HashSet;
 
 static INPUT: &str = include_str!("./input.txt");
 
-pub fn run() -> color_eyre::Result<()> {
-    info!(
-        "[Part 1] The sum of all of the part numbers in the engine schematic is: {}",
-        part_1(INPUT)
-    );
-
-    info!(
-        "[Part 2] The sum of all of the gear ratios in my engine schematic is: {}",
-        part_2(INPUT)
-    );
-
-    Ok(())
+pub fn run() -> super::Runner {
+    (Some(part_1), Some(part_2))
 }
 
 // Answer: 526404
-fn part_1(input: &str) -> u32 {
+fn part_1() -> u32 {
     let mut sum = 0_u32;
 
-    let mut lines = input.lines().enumerate().peekable();
+    let mut lines = INPUT.lines().enumerate().peekable();
     // I assume there are no symbols in the first line.
     let mut prev_line = lines.next().expect("expected at least two lines");
     let mut added_numbers = HashSet::with_capacity(1 << 12);
@@ -80,10 +70,10 @@ fn part_1(input: &str) -> u32 {
 }
 
 // Answer: ???
-fn part_2(input: &str) -> u32 {
+fn part_2() -> u32 {
     let mut sum = 0_u32;
 
-    let mut lines = input.lines().enumerate().peekable();
+    let mut lines = INPUT.lines().enumerate().peekable();
     // I assume there are no symbols in the first line.
     let mut prev_line = lines.next().expect("expected at least two lines");
     let mut added_numbers = HashSet::with_capacity(1 << 12);

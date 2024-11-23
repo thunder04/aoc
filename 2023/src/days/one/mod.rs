@@ -2,22 +2,13 @@ use memchr::memmem::{Finder, FinderRev};
 
 static INPUT: &[u8] = include_bytes!("./input.txt");
 
-pub fn run() -> color_eyre::Result<()> {
-    info!(
-        "[Part 1] The sum of all of the calibration values is: {}",
-        part_1(INPUT)
-    );
-
-    info!(
-        "[Part 2] The sum of all of the calibration values is: {}",
-        part_2(INPUT)
-    );
-
-    Ok(())
+pub fn run() -> super::Runner {
+    (Some(part_1), Some(part_2))
 }
 
 // Answer: 54304
-fn part_1(mut input: &[u8]) -> u32 {
+fn part_1() -> u32 {
+    let mut input = INPUT;
     let mut sum = 0_u32;
 
     'outer: loop {
@@ -65,8 +56,10 @@ fn part_1(mut input: &[u8]) -> u32 {
 // I find the part 2's code a tiny bit inefficient, I should probably optimize it when I'm bored.
 
 // Answer: 54418
-fn part_2(mut input: &[u8]) -> u32 {
+fn part_2() -> u32 {
+    let mut input = INPUT;
     let mut sum = 0;
+
     // The index corresponds to the digit found.
     let finders: [&[Finder]; 10] = [
         &[],

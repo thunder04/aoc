@@ -16,4 +16,3 @@ eyre = { workspace = true }
 aoc_common = { path = "../common" }
 aoc_solutions = { path = "../solutions" }
 memchr = { workspace = true }
-divan = "0.1.15"

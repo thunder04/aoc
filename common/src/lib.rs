@@ -61,3 +61,26 @@ macro_rules! export_days {
         }
     };
 }
+
+#[macro_export]
+macro_rules! bench_days {
+    ($($year: ident: [ $($day: ident),* $(,)? ] ),* $(,)?) => {
+        $(mod $year {
+            $(mod $day {
+                #[bench]
+                fn part_1(b: &mut test::Bencher) {
+                    if let (Some(part_1), _) = aoc_solutions::$year::$day::run() {
+                        b.iter(part_1);
+                    }
+                }
+
+                #[bench]
+                fn part_2(b: &mut test::Bencher) {
+                    if let (_, Some(part_2)) = aoc_solutions::$year::$day::run() {
+                        b.iter(part_2);
+                    }
+                }
+            })*
+        })*
+    };
+}

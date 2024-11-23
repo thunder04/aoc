@@ -1,5 +1,8 @@
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+pub type Runner = (Option<Solution>, Option<Solution>);
+pub type Solution = fn() -> u32;
+
 pub fn install_helpers() -> eyre::Result<()> {
     let (panic_hook, eyre_hook) = color_eyre::config::HookBuilder::default().into_hooks();
     eyre_hook.install()?;
@@ -22,30 +25,23 @@ pub fn install_helpers() -> eyre::Result<()> {
 }
 
 #[macro_export]
-macro_rules! export_day {
+macro_rules! export_days {
     ($($id: literal: $name: literal, $day_mod: ident)*) => {
-        $(mod $day_mod;)*
+        pub use $crate::{Runner, Solution};
+        use color_eyre::Section;
 
-        pub type Runner = (Option<Solution>, Option<Solution>);
-        pub type Solution = fn() -> u32;
+        $(pub mod $day_mod;)*
 
-        pub fn run() -> eyre::Result<()> {
+        pub fn run(day: u8) -> eyre::Result<()> {
             const AVAILABLE_DAYS: &[&'static str] = &[$($name),*];
 
-            let Some(day) = args().nth(1) else {
-                bail!("I expected a day argument")
-            };
-
-            match &*day {
-                $(stringify!($id) => return _run($id, $day_mod::run()),)*
+            match day {
+                $($id => return _run($id, $day_mod::run()),)*
 
                 _ => {
                     return Err(
                         eyre::Report::msg("this day hasn't been implemented").with_suggestion(|| {
-                            format!(
-                                "the available days are: {}",
-                                AVAILABLE_DAYS.join(", ")
-                            )
+                            format!("the available days are: {}", AVAILABLE_DAYS.join(", "))
                         }),
                     )
                 }

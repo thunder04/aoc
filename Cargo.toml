@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
-members = ["2023", "common"]
-default-members = ["2023"]
+members = ["runner", "common", "solutions"]
+default-members = ["runner"]
 
 [workspace.dependencies]
 # Logging crates

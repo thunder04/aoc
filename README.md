@@ -1,4 +1,4 @@
-# Advert of Code (AOC) Solutions
+# Advert of Code (AoC) Solutions
 
 This repository contains my solutions to some of [Advert of Code](https://adventofcode.com/)'s problems.
 

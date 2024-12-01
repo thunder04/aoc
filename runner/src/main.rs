@@ -7,6 +7,7 @@ fn main() -> eyre::Result<()> {
 
     match (args.next(), args.next().as_deref(), args.next()) {
         (_, Some("2023"), Some(day)) => aoc_solutions::_2023::run(day.parse()?),
+        (_, Some("2024"), Some(day)) => aoc_solutions::_2024::run(day.parse()?),
 
         (_, Some(_), Some(_)) => eyre::bail!("This year doesn't exist"),
         (Some(zeroth), _, _) => eyre::bail!("Usage: {zeroth} <year> <day>"),

@@ -1,11 +1,13 @@
 use std::{cmp::Reverse, collections::BinaryHeap, simd::num::SimdUint};
 
+use ahash::AHashMap;
+
 static INPUT: &[u8] = include_bytes!("./input.txt");
 
 const DIGITS: usize = 5;
 
 pub fn run() -> super::Runner {
-    (Some(part_1), None)
+    (Some(part_1), Some(part_2))
 }
 
 // Answer: 2970687
@@ -28,11 +30,27 @@ fn part_1() -> u32 {
     sum
 }
 
-// Answer: 54418
+// Answer: 23963899
 fn part_2() -> u32 {
-    let input = INPUT;
+    let mut counter = AHashMap::<u32, u32>::with_capacity(10_000);
+    let mut nums = Vec::<u32>::with_capacity(10_000);
 
-    0
+    INPUT
+        .split(|&x| x == b'\n')
+        .filter_map(|line| {
+            Some((
+                parse_digits(line.first_chunk::<DIGITS>()?),
+                parse_digits(line.last_chunk::<DIGITS>()?),
+            ))
+        })
+        .for_each(|(a, b)| {
+            *counter.entry(b).or_default() += 1;
+            nums.push(a);
+        });
+
+    nums.into_iter()
+        .map(|x| x * counter.get(&x).copied().unwrap_or(0))
+        .sum()
 }
 
 // fn parse_digits<const N: usize>(buf: &[u8; N]) -> u32 {

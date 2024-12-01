@@ -15,3 +15,6 @@ eyre = "0.6.12"
 
 # Misc. crates
 memchr = "2.7.4"
+
+[profile.release]
+debug = true

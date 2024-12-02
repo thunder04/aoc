@@ -1,8 +1,4 @@
-use std::{
-    cmp::Reverse,
-    collections::BinaryHeap,
-    simd::{num::SimdUint, u32x16, u8x16},
-};
+use std::simd::{num::SimdUint, u32x16, u8x16};
 
 static INPUT: &[u8] = include_bytes!("./input.txt");
 
@@ -12,16 +8,19 @@ pub fn run() -> super::Runner {
 
 // Answer: 2970687
 fn part_1() -> u32 {
-    let mut heap_a = BinaryHeap::with_capacity(10000);
-    let mut heap_b = BinaryHeap::with_capacity(10000);
+    let mut list_a = Vec::with_capacity(10000 /* Optimistic amount of lines in the file. */);
+    let mut list_b = Vec::with_capacity(10000 /* Optimistic amount of lines in the file. */);
     let mut sum = 0;
 
     read_lines(|(a1,), (b1,)| {
-        heap_a.push(Reverse(a1));
-        heap_b.push(Reverse(b1));
+        list_a.push(a1);
+        list_b.push(b1);
     });
 
-    while let (Some(Reverse(a)), Some(Reverse(b))) = (heap_a.pop(), heap_b.pop()) {
+    list_a.sort_unstable();
+    list_b.sort_unstable();
+
+    while let (Some(a), Some(b)) = (list_a.pop(), list_b.pop()) {
         sum += a.abs_diff(b);
     }
 

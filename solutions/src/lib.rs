@@ -1,3 +1,4 @@
+#![feature(iter_map_windows)]
 #![feature(portable_simd)]
 
 #[macro_use]

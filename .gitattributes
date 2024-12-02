@@ -1,0 +1,3 @@
+# Most of my solutions expect input.txt to have a line feed EOL.
+# Ensure my misfortunate Windows friends to have working solutions.
+input.txt   eol=lf

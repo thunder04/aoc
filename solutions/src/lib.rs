@@ -50,22 +50,18 @@ macro_rules! export_days {
 #[macro_export]
 macro_rules! bench_days {
     ($($year: ident: [ $($day: ident),* $(,)? ] ),* $(,)?) => {
-        $(mod $year {
-            $(mod $day {
-                #[bench]
-                fn part_1(b: &mut test::Bencher) {
-                    if let (Some(part_1), _) = aoc_solutions::$year::$day::run() {
-                        b.iter(part_1);
-                    }
+        fn criterion_benchmark(c: &mut criterion::Criterion) {
+            $($({
+                let (part_1, part_2) = aoc_solutions::$year::$day::run();
+
+                if let Some(part_1) = part_1 {
+                    c.bench_function(&format!("{1}::{0}::P1", stringify!($day), &stringify!($year)[1..]), |b| b.iter(part_1));
                 }
 
-                #[bench]
-                fn part_2(b: &mut test::Bencher) {
-                    if let (_, Some(part_2)) = aoc_solutions::$year::$day::run() {
-                        b.iter(part_2);
-                    }
+                if let Some(part_2) = part_2 {
+                    c.bench_function(&format!("{1}::{0}::P2", stringify!($day), &stringify!($year)[1..]), |b| b.iter(part_2));
                 }
-            })*
-        })*
+            })*)*
+        }
     };
 }

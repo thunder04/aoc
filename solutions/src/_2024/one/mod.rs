@@ -4,8 +4,6 @@ use std::{
     simd::{num::SimdUint, u32x16, u8x16},
 };
 
-use ahash::AHashMap;
-
 static INPUT: &[u8] = include_bytes!("./input.txt");
 
 pub fn run() -> super::Runner {
@@ -32,16 +30,18 @@ fn part_1() -> u32 {
 
 // Answer: 23963899
 fn part_2() -> u32 {
-    let mut counter = AHashMap::<u32, u32>::with_capacity(10_000);
-    let mut nums = Vec::<u32>::with_capacity(10_000);
+    // Try to use small numbers (e.g. u16) so it can fit in the L{1/2/3} cache.
+    let mut counter = vec![0_u16; 99999 /* Biggest 5-digit number. */];
+    let mut nums =
+        Vec::<u32>::with_capacity(10_000 /* Optimistic amount of lines in the file. */);
 
     read_lines(|(a1,), (b1,)| {
-        *counter.entry(b1).or_default() += 1;
+        counter[b1 as usize] += 1;
         nums.push(a1);
     });
 
     nums.into_iter()
-        .map(|x| x * counter.get(&x).copied().unwrap_or(0))
+        .map(|x| x * counter[x as usize] as u32)
         .sum()
 }
 

@@ -1,6 +1,7 @@
 use std::simd::{num::SimdUint, u32x16, u8x16};
 
 static INPUT: &[u8] = include_bytes!("./input.txt");
+const INPUT_LINES: usize = 10_000; // Optimistic amount of lines in the file.
 
 pub fn run() -> super::Runner {
     (Some(part_1), Some(part_2))
@@ -8,8 +9,8 @@ pub fn run() -> super::Runner {
 
 // Answer: 2970687
 fn part_1() -> u32 {
-    let mut list_a = Vec::with_capacity(10000 /* Optimistic amount of lines in the file. */);
-    let mut list_b = Vec::with_capacity(10000 /* Optimistic amount of lines in the file. */);
+    let mut list_a = Vec::with_capacity(INPUT_LINES);
+    let mut list_b = Vec::with_capacity(INPUT_LINES);
     let mut sum = 0;
 
     read_lines(|(a1,), (b1,)| {
@@ -31,8 +32,7 @@ fn part_1() -> u32 {
 fn part_2() -> u32 {
     // Try to use small numbers (e.g. u16) so it can fit in the L{1/2/3} cache.
     let mut counter = vec![0_u16; 99999 /* Biggest 5-digit number. */];
-    let mut nums =
-        Vec::<u32>::with_capacity(10_000 /* Optimistic amount of lines in the file. */);
+    let mut nums = Vec::<u32>::with_capacity(INPUT_LINES);
 
     read_lines(|(a1,), (b1,)| {
         counter[b1 as usize] += 1;

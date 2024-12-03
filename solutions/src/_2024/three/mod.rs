@@ -1,12 +1,15 @@
 use memchr::memmem::Finder;
 
 static INPUT: &[u8] = include_bytes!("./input.txt");
+const DONT_I: &[u8] = b"don't()";
+const MUL_I: &[u8] = b"mul(";
+const DO_I: &[u8] = b"do()";
 
 pub fn run() -> super::Runner {
     (Some(part_1), Some(part_2))
 }
 
-macro_rules! lazy_read_number {
+macro_rules! read_number_lazily {
     ($input: expr, $idx: expr, $off: expr, $last_arm: expr) => {
         match $input[$idx + $off] {
             d1 @ b'0'..=b'9' => match $input[$idx + $off + 1] {
@@ -36,12 +39,12 @@ macro_rules! lazy_read_number {
 
 // Answer: 170807108
 fn part_1() -> u32 {
-    let finder = Finder::new(b"mul(");
+    let mul_finder = Finder::new(MUL_I);
     let mut sum = 0;
 
-    for candidate in finder.find_iter(INPUT) {
-        let (a, next_offset) = lazy_read_number!(INPUT, candidate, 4, b',');
-        let (b, _) = lazy_read_number!(INPUT, candidate, next_offset, b')');
+    for candidate in mul_finder.find_iter(INPUT) {
+        let (a, next_offset) = read_number_lazily!(INPUT, candidate, MUL_I.len(), b',');
+        let (b, _) = read_number_lazily!(INPUT, candidate, next_offset, b')');
 
         sum += a * b;
     }
@@ -51,30 +54,26 @@ fn part_1() -> u32 {
 
 // Answer: 74838033
 fn part_2() -> u32 {
-    const DONT_NEEDLE: &[u8] = b"don't()";
-    const MUL_NEEDLE: &[u8] = b"mul(";
-    const DO_NEEDLE: &[u8] = b"do()";
-
-    let dont_finder = Finder::new(DONT_NEEDLE);
-    let mul_finder = Finder::new(MUL_NEEDLE);
-    let do_finder = Finder::new(DO_NEEDLE);
+    let dont_finder = Finder::new(DONT_I);
+    let mul_finder = Finder::new(MUL_I);
+    let do_finder = Finder::new(DO_I);
 
     let mut input = INPUT;
     let mut sum = 0;
 
     loop {
         let limit_idx = dont_finder.find(input).unwrap_or(input.len());
-        let (input_w_instructions, rest_input) = input.split_at(limit_idx);
+        let (input_w_instr, rest_input) = input.split_at(limit_idx);
 
-        for candidate in mul_finder.find_iter(input_w_instructions) {
-            let (a, next_offset) = lazy_read_number!(input_w_instructions, candidate, 4, b',');
-            let (b, _) = lazy_read_number!(input_w_instructions, candidate, next_offset, b')');
+        for candidate in mul_finder.find_iter(input_w_instr) {
+            let (a, next_offset) = read_number_lazily!(input_w_instr, candidate, MUL_I.len(), b',');
+            let (b, _) = read_number_lazily!(input_w_instr, candidate, next_offset, b')');
 
             sum += a * b;
         }
 
         if let Some(continue_idx) = do_finder.find(rest_input) {
-            input = &rest_input[continue_idx + DO_NEEDLE.len()..];
+            input = &rest_input[continue_idx + DO_I.len()..];
         } else {
             break;
         }

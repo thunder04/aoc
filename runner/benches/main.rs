@@ -5,5 +5,5 @@ criterion_main!(benches);
 
 aoc_solutions::bench_days! {
     _2023: [eight],
-    _2024: [two],
+    _2024: [one, two],
 }

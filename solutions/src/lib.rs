@@ -6,6 +6,7 @@ extern crate tracing;
 
 pub mod _2023;
 pub mod _2024;
+pub mod utils;
 
 pub type Runner = (Option<Solution>, Option<Solution>);
 pub type Solution = fn() -> u32;

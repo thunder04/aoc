@@ -58,14 +58,14 @@ fn part_1() -> u32 {
 }
 
 // Answer: ???
-fn part_2() -> u32 {
+pub fn part_2() -> u32 {
     0
 }
 
 /// Reads three lines at once from input.
 /// # Safety
-/// - Input must be perfect. Each line must be of this form: `??? = (???, ???)\n`, where `?`
-///   satisfies the character set `[A-Z]`. A trailing newline is accepted.
+/// - Input must be perfect. Each line must be of this form: `??? = (???, ???)\n`, where `?` is an
+///   ASCII character. A trailing newline is accepted.
 /// - Platform must support SIMD instructions. IDK which exactly, but it should, yep ¯\\_(ツ)\_/¯
 unsafe fn read_lines(mut input: &[u8], mut cb: impl FnMut([(usize, (usize, usize)); 3])) {
     const CHUNK_SIZE: usize = 50;
@@ -135,18 +135,4 @@ unsafe fn read_lines(mut input: &[u8], mut cb: impl FnMut([(usize, (usize, usize
             _ => unreachable!("Invalid input"),
         }
     }
-}
-
-fn debug_array_17<T: std::fmt::Display>(slice: &[T], title: &str) {
-    println!("===== {title} =====\n");
-
-    for (idx, num) in slice.iter().enumerate() {
-        print!("a[{idx:0>2}]={num: <7} ");
-
-        if idx == 16 || idx == 16 * 2 + 1 || idx == 16 * 3 + 2 {
-            println!();
-        }
-    }
-
-    println!("\n\n");
 }

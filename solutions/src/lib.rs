@@ -1,5 +1,5 @@
-#![feature(iter_map_windows)]
-#![feature(portable_simd)]
+#![feature(iter_map_windows, portable_simd, core_intrinsics)]
+#![allow(internal_features)]
 
 #[macro_use]
 extern crate tracing;

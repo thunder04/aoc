@@ -13,17 +13,17 @@ pub type Solution = fn() -> u32;
 
 #[macro_export]
 macro_rules! export_days {
-    ($($id: literal: $name: literal, $day_mod: ident)*) => {
+    ($($title: literal: $day_mod: ident),*) => {
         pub use $crate::{Runner, Solution};
         use color_eyre::Section;
 
         $(pub mod $day_mod;)*
 
         pub fn run(day: u8) -> eyre::Result<()> {
-            const AVAILABLE_DAYS: &[&'static str] = &[$($name),*];
+            const AVAILABLE_DAYS: &[&'static str] = &[$($title),*];
 
             match day {
-                $($id => return _run($id, $day_mod::run()),)*
+                $(_ if day == const { parse_day($title) } => return _run(day, $day_mod::run()),)*
 
                 _ => {
                     return Err(
@@ -45,6 +45,22 @@ macro_rules! export_days {
 
                 Ok(())
             }
+        }
+
+        const fn parse_day(title: &'static str) -> u8 {
+            let title = title.as_bytes();
+
+            if title[0] != b'D' || title[1] != b'a' || title[2] != b'y' || title[3] != b' ' {
+                panic!("A day's title must start with \"Day \", followed by its number.");
+            }
+
+            if title[title.len() - 1].is_ascii_whitespace() {
+                panic!("Trailing whitespaces aren't allowed fam. Why? Because I can, duh!");
+            }
+
+            $crate::read_number_lazily!(title, 4, b':', {
+                panic!("A day's name must start with \"Day ##: \"");
+            }).0 as u8
         }
     };
 }

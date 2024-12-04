@@ -4,9 +4,13 @@ This repository contains my solutions to some of [Advert of Code](https://advent
 
 The solutions are obviously contained in the `solutions` folder. To see a day's solution, visit the `solutions/src/_{year}/{day}/mod.rs` file.
 
-To run one of them, run the `cargo run` command on your terminal. A nightly compiler might be required.
+To run a solution, run the `cargo run <year> <day>` command on your terminal. A nightly compiler is required.
 
-To benchmark solutions, go to `runner/benches/main.rs` to add the interested days. Then run `cargo bench` and observe the results.
+> [!NOTE]
+> Some of my solutions expect from your CPU to support instruction sets like AVX2 and SSE2. I do not verify their availability (or I might do, who knows). At worst you will get undefined behavior. At best you will get meaningless results.
+
+> [!TIP]
+> To benchmark solutions, go to `runner/benches/main.rs` and add the interested days. Then run `cargo bench` and observe the results.
 
 ## A Message to the Windows Users
 

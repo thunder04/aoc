@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{fmt::Display, ops::Index};
 
 pub use slice_2d::Slice2D;
 
@@ -44,13 +44,17 @@ macro_rules! read_number_lazily {
 }
 
 /// Print an entire array. Creates a new line at every `split_at` elements.
-pub fn debug_array<T: Display>(slice: &[T], title: &str, split_at: usize) {
+pub fn debug_array<I>(slice: I, title: &str, split_at: usize)
+where
+    I: IntoIterator,
+    I::Item: Display,
+{
     println!("===== {title} =====\n");
 
-    for (idx, num) in slice.iter().enumerate() {
+    for (idx, num) in slice.into_iter().enumerate() {
         let line = idx / (split_at + 1);
 
-        print!("a[{idx:0>2}]={num: <7} ");
+        print!("a[{idx:0>3}]={num: <5} ");
 
         if idx == (split_at * (line + 1) + line) {
             println!();

@@ -6,14 +6,10 @@ pub fn run() -> super::Runner {
 
 // Answer: ???
 fn part_1() -> u32 {
-    let mut sum = 0;
-
-    sum
+    0
 }
 
 // Answer: ???
 fn part_2() -> u32 {
-    let mut sum = 0;
-
-    sum
+    0
 }

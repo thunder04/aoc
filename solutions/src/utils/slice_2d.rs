@@ -1,18 +1,22 @@
 use std::ops::{Deref, Index};
 
-pub struct Slice2D<'a> {
-    slice: &'a [u8],
+pub struct Slice2D<'a, T> {
+    slice: &'a [T],
     row_len: usize,
 }
 
-impl<'a> Slice2D<'a> {
-    pub const fn new(slice: &'a [u8], row_len: usize) -> Self {
+impl<'a, T> Slice2D<'a, T> {
+    pub const fn new(slice: &'a [T], row_len: usize) -> Self {
         Self { slice, row_len }
+    }
+
+    pub const fn row_len(&self) -> usize {
+        self.row_len
     }
 }
 
-impl Index<(usize, usize)> for Slice2D<'_> {
-    type Output = u8;
+impl<T> Index<(usize, usize)> for Slice2D<'_, T> {
+    type Output = T;
 
     #[inline(always)]
     fn index(&self, (col, row): (usize, usize)) -> &Self::Output {
@@ -22,8 +26,8 @@ impl Index<(usize, usize)> for Slice2D<'_> {
     }
 }
 
-impl Deref for Slice2D<'_> {
-    type Target = [u8];
+impl<T> Deref for Slice2D<'_, T> {
+    type Target = [T];
 
     #[inline(always)]
     fn deref(&self) -> &Self::Target {
@@ -37,7 +41,7 @@ mod tests {
 
     use super::*;
 
-    const SLICE: Slice2D = Slice2D::new(ARRAY, ROW_LEN);
+    const SLICE: Slice2D<'_, u8> = Slice2D::new(ARRAY, ROW_LEN);
     const ROW_LEN: usize = 6;
     #[rustfmt::skip]
     const ARRAY: &[u8] = &[

@@ -18,7 +18,7 @@ fn part_1() -> u32 {
 
     for idx in mul_finder.find_iter(INPUT) {
         let (a, next_offset) = read_number_lazily!(&INPUT[idx..], MUL_I.len(), b',');
-        let (b, _) = read_number_lazily!(&INPUT[idx..], next_offset, b')');
+        let (b, _) = read_number_lazily!(&INPUT[idx..], next_offset + 1, b')');
 
         sum += a * b;
     }
@@ -41,7 +41,7 @@ fn part_2() -> u32 {
 
         for idx in mul_finder.find_iter(input_w_instr) {
             let (a, next_offset) = read_number_lazily!(&input_w_instr[idx..], MUL_I.len(), b',');
-            let (b, _) = read_number_lazily!(&input_w_instr[idx..], next_offset, b')');
+            let (b, _) = read_number_lazily!(&input_w_instr[idx..], next_offset + 1, b')');
 
             sum += a * b;
         }

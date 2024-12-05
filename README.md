@@ -8,6 +8,7 @@ To run a solution, run the `cargo run <year> <day>` command on your terminal. A 
 
 > [!NOTE]
 > Some of my solutions expect from your CPU to support instruction sets like AVX2 and SSE2. I do not verify their availability (or I might do, who knows). At worst you will get undefined behavior. At best you will get meaningless results.
+> Also, the inputs (i.e. `input.txt` files) must have a trailing newline.
 
 > [!TIP]
 > To benchmark solutions, go to `runner/benches/main.rs` and add the interested days. Then run `cargo bench` and observe the results.

@@ -1,8 +1,4 @@
-use std::{fmt::Display, ops::Index};
-
-pub use slice_2d::Slice2D;
-
-mod slice_2d;
+use std::fmt::Display;
 
 /// Reads up to three digits from `$input` withn `$off` offset.
 ///

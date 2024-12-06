@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::fmt::Debug;
 
 /// Reads up to three digits from `$input` withn `$off` offset.
 ///
@@ -43,14 +43,14 @@ macro_rules! read_number_lazily {
 pub fn debug_array<I>(slice: I, title: &str, split_at: usize)
 where
     I: IntoIterator,
-    I::Item: Display,
+    I::Item: Debug,
 {
     println!("===== {title} =====\n");
 
     for (idx, num) in slice.into_iter().enumerate() {
         let line = idx / (split_at + 1);
 
-        print!("a[{idx:0>3}]={num: <5} ");
+        print!("a[{idx: >5}]={: <2} ", format!("{num:?}"));
 
         if idx == (split_at * (line + 1) + line) {
             println!();

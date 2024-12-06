@@ -1,53 +1,78 @@
+use std::cmp::Ordering;
+
 use specialized_ll::*;
 
 use crate::read_number_lazily;
 
 // static INPUT: &[u8] = b"\
-// 47|53
-// 97|13
-// 97|61
-// 97|47
-// 75|29
-// 61|13
-// 75|53
-// 29|13
-// 97|29
-// 53|29
-// 61|53
-// 97|53
-// 61|29
-// 47|13
-// 75|47
-// 97|75
-// 47|61
-// 75|61
-// 47|29
-// 75|13
-// 53|13
-//
-// 75,47,61,53,29
-// 97,61,53,29,13
-// 75,29,13
-// 75,97,47,61,53
-// 61,13,29
-// 97,13,75,29,47\n";
+// 47|53\n97|13\n97|61\n97|47\n75|29\n61|13\n75|53
+// 29|13\n97|29\n53|29\n61|53\n97|53\n61|29\n47|13
+// 75|47\n97|75\n47|61\n75|61\n47|29\n75|13\n53|13
+
+// 75,47,61,53,29\n97,61,53,29,13\n75,29,13
+// 75,97,47,61,53\n61,13,29\n97,13,75,29,47\n";
 static INPUT: &[u8] = include_bytes!("./input.txt");
 
 const MAX_RULES_PER_NODE: usize = 32;
 const BIGGEST_NODE: usize = 99;
 
 pub fn run() -> super::Runner {
-    (Some(part_1), None)
+    (Some(part_1), Some(part_2))
 }
 
 // Answer: 4689
 fn part_1() -> u32 {
-    let mut ll = SpecializedLinkedList::<BIGGEST_NODE>::new();
-    let mut input = INPUT;
     let mut sum: u32 = 0;
 
+    parse_lines(|ll, buf, mut expected_rules: u128| {
+        if buf.iter().all(|page| {
+            // Remove the current page from the rules. A rule like "X | X" doesn't make sense.
+            expected_rules &= !(1 << page);
+
+            ll.contains_all_rules(*page, expected_rules)
+        }) {
+            sum += buf[buf.len() / 2] as u32;
+        }
+    });
+
+    sum
+}
+
+// Answer: 6336
+fn part_2() -> u32 {
+    let mut sum: u32 = 0;
+
+    parse_lines(|ll, buf, mut expected_rules: u128| {
+        for page in &*buf {
+            expected_rules &= !(1 << page);
+
+            if !ll.contains_all_rules(*page, expected_rules) {
+                buf.sort_by(|a, b| {
+                    if ll.contains_all_rules(*a, 1 << b) {
+                        Ordering::Less
+                    } else if ll.contains_all_rules(*b, 1 << a) {
+                        Ordering::Greater
+                    } else {
+                        Ordering::Equal
+                    }
+                });
+
+                sum += buf[buf.len() / 2] as u32;
+
+                break;
+            }
+        }
+    });
+
+    sum
+}
+
+fn parse_lines(mut cb: impl FnMut(&SpecializedLinkedList, &mut [u8], u128)) {
+    let mut ll = SpecializedLinkedList::new();
+    let mut buf = Vec::with_capacity(32);
+    let mut input = INPUT;
+
     // Read all rules from input.
-    #[allow(clippy::while_let_loop)]
     loop {
         let (node, off_a) = read_number_lazily!(input, 0, b'|', {
             input = &input[1..]; // Matching should've failed at the empty newline. Go to the next line.
@@ -65,13 +90,10 @@ fn part_1() -> u32 {
         input = &input[off_b + 1..];
     }
 
-    let mut buf = Vec::with_capacity(32);
-
     loop {
         let mut expected_rules = 0_u128;
 
         // Store comma separated numbers to `buf`.
-        #[allow(clippy::while_let_loop)]
         loop {
             let (a, off_a) = read_number_lazily!(input, 0, b',' | b'\n', {
                 unreachable!("Invalid input");
@@ -87,14 +109,7 @@ fn part_1() -> u32 {
             }
         }
 
-        if buf.iter().all(|page| {
-            // Remove the current page from the rules. A rule like "X | X" doesn't make sense.
-            expected_rules &= !(1 << page);
-
-            ll.contains_all_rules(*page, expected_rules)
-        }) {
-            sum += buf[buf.len() / 2] as u32;
-        }
+        cb(&ll, &mut buf, expected_rules);
 
         if input.is_empty() {
             break;
@@ -102,24 +117,19 @@ fn part_1() -> u32 {
             buf.clear();
         }
     }
-
-    sum
-}
-
-// Answer: ???
-fn part_2() -> u32 {
-    0
 }
 
 mod specialized_ll {
+    use super::BIGGEST_NODE;
+
     // TODO: After you are done with the day. Store [u8; MAX_RULES_PER_NODE] as a u128 bitmask,
     // since max node number ID can be 100.
-    pub struct SpecializedLinkedList<const SIZE: usize>([u128; SIZE]);
+    pub struct SpecializedLinkedList([u128; BIGGEST_NODE]);
 
-    impl<const SIZE: usize> SpecializedLinkedList<SIZE> {
+    impl SpecializedLinkedList {
         #[inline(always)]
         pub const fn new() -> Self {
-            Self([0; SIZE])
+            Self([0; BIGGEST_NODE])
         }
 
         /// Add a new rule for node.
@@ -149,7 +159,7 @@ mod specialized_ll {
 
         #[test]
         fn basic_usage() {
-            let mut ll = SpecializedLinkedList::<100>::new();
+            let mut ll = SpecializedLinkedList::new();
 
             ll.add_rule(75, 29);
             ll.add_rule(75, 13);

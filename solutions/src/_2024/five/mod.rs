@@ -21,8 +21,8 @@ pub fn run() -> super::Runner {
 }
 
 // Answer: 4689
-fn part_1() -> u32 {
-    let mut sum: u32 = 0;
+fn part_1() -> u64 {
+    let mut sum: u64 = 0;
 
     parse_lines(|ll, buf, mut expected_rules: u128| {
         if buf.iter().all(|page| {
@@ -31,7 +31,7 @@ fn part_1() -> u32 {
 
             ll.contains_all_rules(*page, expected_rules)
         }) {
-            sum += buf[buf.len() / 2] as u32;
+            sum += buf[buf.len() / 2] as u64;
         }
     });
 
@@ -39,8 +39,8 @@ fn part_1() -> u32 {
 }
 
 // Answer: 6336
-fn part_2() -> u32 {
-    let mut sum: u32 = 0;
+fn part_2() -> u64 {
+    let mut sum: u64 = 0;
 
     parse_lines(|ll, buf, mut expected_rules: u128| {
         for page in &*buf {
@@ -57,7 +57,7 @@ fn part_2() -> u32 {
                     }
                 });
 
-                sum += buf[buf.len() / 2] as u32;
+                sum += buf[buf.len() / 2] as u64;
 
                 break;
             }

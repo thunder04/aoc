@@ -14,7 +14,7 @@ pub fn run() -> super::Runner {
 }
 
 // Answer: 23147
-fn part_1() -> u32 {
+fn part_1() -> u64 {
     // TODO Ideas: I don't really like a ~900μs execution time, how about:
     //  - Maintain a queue of "traverse operations" while you fill `nodes`?
     //  - SIMD accelerated line reading?
@@ -58,7 +58,7 @@ fn part_1() -> u32 {
 }
 
 // Answer: ???
-pub fn part_2() -> u32 {
+pub fn part_2() -> u64 {
     0
 }
 

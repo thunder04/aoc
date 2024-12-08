@@ -18,19 +18,19 @@ macro_rules! read_number_lazily {
                 d2 @ b'0'..=b'9' => match $input[$off + 2] {
                     d3 @ b'0'..=b'9' => match $input[$off + 3] {
                         $last_pat => (
-                            ((d1 - b'0') as u32 * 100)
-                                + ((d2 - b'0') as u32 * 10)
-                                + ((d3 - b'0') as u32),
+                            ((d1 - b'0') as u64 * 100)
+                                + ((d2 - b'0') as u64 * 10)
+                                + ((d3 - b'0') as u64),
                             $off + 3,
                         ),
                         _ => $invalid_arm,
                     },
 
-                    $last_pat => (((d1 - b'0') as u32 * 10) + ((d2 - b'0') as u32), $off + 2),
+                    $last_pat => (((d1 - b'0') as u64 * 10) + ((d2 - b'0') as u64), $off + 2),
                     _ => $invalid_arm,
                 },
 
-                $last_pat => ((d1 - b'0') as u32, $off + 1),
+                $last_pat => ((d1 - b'0') as u64, $off + 1),
                 _ => $invalid_arm,
             },
 

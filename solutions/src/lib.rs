@@ -9,7 +9,7 @@ pub mod _2024;
 pub mod utils;
 
 pub type Runner = (Option<Solution>, Option<Solution>);
-pub type Solution = fn() -> u32;
+pub type Solution = fn() -> u64;
 
 #[macro_export]
 macro_rules! export_days {

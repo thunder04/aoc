@@ -10,7 +10,7 @@ pub fn run() -> super::Runner {
 
 // Answer: 2562
 #[allow(clippy::identity_op)]
-fn part_1() -> u32 {
+fn part_1() -> u64 {
     let mut sum = 0;
 
     for idx in memchr_iter(b'X', INPUT) {
@@ -27,42 +27,42 @@ fn part_1() -> u32 {
         sum += (can_go_e
             && INPUT[idx + 1] == b'M'
             && INPUT[idx + 2] == b'A'
-            && INPUT[idx + 3] == b'S') as u32;
+            && INPUT[idx + 3] == b'S') as u64;
 
         sum += (can_go_w
             && INPUT[idx - 1] == b'M'
             && INPUT[idx - 2] == b'A'
-            && INPUT[idx - 3] == b'S') as u32;
+            && INPUT[idx - 3] == b'S') as u64;
 
         sum += (can_go_s
             && INPUT[idx + (ROW_LEN * 1)] == b'M'
             && INPUT[idx + (ROW_LEN * 2)] == b'A'
-            && INPUT[idx + (ROW_LEN * 3)] == b'S') as u32;
+            && INPUT[idx + (ROW_LEN * 3)] == b'S') as u64;
 
         sum += (can_go_n
             && INPUT[idx - (ROW_LEN * 1)] == b'M'
             && INPUT[idx - (ROW_LEN * 2)] == b'A'
-            && INPUT[idx - (ROW_LEN * 3)] == b'S') as u32;
+            && INPUT[idx - (ROW_LEN * 3)] == b'S') as u64;
 
         sum += ((can_go_e && can_go_s)
             && INPUT[idx + (1) + (ROW_LEN * 1)] == b'M'
             && INPUT[idx + (2) + (ROW_LEN * 2)] == b'A'
-            && INPUT[idx + (3) + (ROW_LEN * 3)] == b'S') as u32;
+            && INPUT[idx + (3) + (ROW_LEN * 3)] == b'S') as u64;
 
         sum += ((can_go_e && can_go_n)
             && INPUT[idx + (1) - (ROW_LEN * 1)] == b'M'
             && INPUT[idx + (2) - (ROW_LEN * 2)] == b'A'
-            && INPUT[idx + (3) - (ROW_LEN * 3)] == b'S') as u32;
+            && INPUT[idx + (3) - (ROW_LEN * 3)] == b'S') as u64;
 
         sum += ((can_go_w && can_go_s)
             && INPUT[idx - (1) + (ROW_LEN * 1)] == b'M'
             && INPUT[idx - (2) + (ROW_LEN * 2)] == b'A'
-            && INPUT[idx - (3) + (ROW_LEN * 3)] == b'S') as u32;
+            && INPUT[idx - (3) + (ROW_LEN * 3)] == b'S') as u64;
 
         sum += ((can_go_w && can_go_n)
             && INPUT[idx - (1) - (ROW_LEN * 1)] == b'M'
             && INPUT[idx - (2) - (ROW_LEN * 2)] == b'A'
-            && INPUT[idx - (3) - (ROW_LEN * 3)] == b'S') as u32;
+            && INPUT[idx - (3) - (ROW_LEN * 3)] == b'S') as u64;
     }
 
     sum
@@ -70,7 +70,7 @@ fn part_1() -> u32 {
 
 // Answer: 1902
 #[allow(clippy::identity_op)]
-fn part_2() -> u32 {
+fn part_2() -> u64 {
     let mut sum = 0;
 
     for idx in memchr_iter(b'A', INPUT) {
@@ -103,7 +103,7 @@ fn part_2() -> u32 {
         sum += ((can_go_w && can_go_n && can_go_e && can_go_s)
             && ((get![NW] == b'M' && get![SE] == b'S') || (get![NW] == b'S' && get![SE] == b'M'))
             && ((get![NE] == b'M' && get![SW] == b'S') || (get![NE] == b'S' && get![SW] == b'M')))
-            as u32;
+            as u64;
     }
 
     sum

@@ -10,12 +10,12 @@ pub fn run() -> super::Runner {
 }
 
 // Answer: 213
-fn part_1() -> u32 {
+fn part_1() -> u64 {
     answer_generator_v10000::<false>()
 }
 
 // Answer: ???
-fn part_2() -> u32 {
+fn part_2() -> u64 {
     unimplemented!()
 }
 
@@ -60,7 +60,7 @@ fn part_2() -> u32 {
 /// ## ALL GOOD
 /// Set `s.prev_prev_lvl` to `s.prev_lvl`. Set `s.prev_lvl` to `s.lvl`. Set `s.lvl` to `0`.
 /// Advance input by one. Go to [1].
-fn answer_generator_v10000<const IS_PART_2: bool>() -> u32 {
+fn answer_generator_v10000<const IS_PART_2: bool>() -> u64 {
     #[derive(Default)]
     struct State {
         saw_unsafe_lvl: bool,
@@ -88,7 +88,7 @@ fn answer_generator_v10000<const IS_PART_2: bool>() -> u32 {
     }
 
     let mut s = State::default();
-    let mut safe_reports = 0_u32;
+    let mut safe_reports = 0_u64;
     let mut input = INPUT;
 
     loop {

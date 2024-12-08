@@ -12,7 +12,7 @@ pub fn run() -> super::Runner {
 }
 
 // Answer: 170807108
-fn part_1() -> u32 {
+fn part_1() -> u64 {
     let mul_finder = Finder::new(MUL_I);
     let mut sum = 0;
 
@@ -27,7 +27,7 @@ fn part_1() -> u32 {
 }
 
 // Answer: 74838033
-fn part_2() -> u32 {
+fn part_2() -> u64 {
     let dont_finder = Finder::new(DONT_I);
     let mul_finder = Finder::new(MUL_I);
     let do_finder = Finder::new(DO_I);

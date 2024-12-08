@@ -7,8 +7,8 @@ pub fn run() -> super::Runner {
 }
 
 // Answer: 526404
-fn part_1() -> u32 {
-    let mut sum = 0_u32;
+fn part_1() -> u64 {
+    let mut sum = 0_u64;
 
     let mut lines = INPUT.lines().enumerate().peekable();
     // I assume there are no symbols in the first line.
@@ -54,7 +54,7 @@ fn part_1() -> u32 {
                             x = ""
                         );
 
-                        sum += simple_parse_digit(line, idxs) as u32;
+                        sum += simple_parse_digit(line, idxs) as u64;
                     }
                 }
             }
@@ -70,8 +70,8 @@ fn part_1() -> u32 {
 }
 
 // Answer: ???
-fn part_2() -> u32 {
-    let mut sum = 0_u32;
+fn part_2() -> u64 {
+    let mut sum = 0_u64;
 
     let mut lines = INPUT.lines().enumerate().peekable();
     // I assume there are no symbols in the first line.
@@ -121,9 +121,9 @@ fn part_2() -> u32 {
 
                         // This assumes the numbers in the input are never zero.
                         if first == 0 {
-                            first = simple_parse_digit(line, idxs) as u32;
+                            first = simple_parse_digit(line, idxs) as u64;
                         } else if second == 0 {
-                            second = simple_parse_digit(line, idxs) as u32;
+                            second = simple_parse_digit(line, idxs) as u64;
                         } else {
                             break;
                         }

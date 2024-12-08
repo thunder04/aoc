@@ -7,9 +7,9 @@ pub fn run() -> super::Runner {
 }
 
 // Answer: 54304
-fn part_1() -> u32 {
+fn part_1() -> u64 {
     let mut input = INPUT;
-    let mut sum = 0_u32;
+    let mut sum = 0_u64;
 
     'outer: loop {
         let first_digit;
@@ -32,7 +32,7 @@ fn part_1() -> u32 {
                 .find(|(_, b)| b.is_ascii_digit() || **b == b'\n')
             {
                 Some((idx, b'\n')) => {
-                    sum += (first_digit * 10 + second_digit) as u32;
+                    sum += (first_digit * 10 + second_digit) as u64;
                     input = &input[idx + 1..];
 
                     break;
@@ -44,7 +44,7 @@ fn part_1() -> u32 {
                 }
 
                 None => {
-                    sum += (first_digit * 10 + second_digit) as u32;
+                    sum += (first_digit * 10 + second_digit) as u64;
 
                     break 'outer sum;
                 }
@@ -56,7 +56,7 @@ fn part_1() -> u32 {
 // I find the part 2's code a tiny bit inefficient, I should probably optimize it when I'm bored.
 
 // Answer: 54418
-fn part_2() -> u32 {
+fn part_2() -> u64 {
     let mut input = INPUT;
     let mut sum = 0;
 
@@ -132,7 +132,7 @@ fn part_2() -> u32 {
             break;
         };
 
-        sum += (first_digit * 10 + second_digit) as u32;
+        sum += (first_digit * 10 + second_digit) as u64;
         input = new_input;
     }
 

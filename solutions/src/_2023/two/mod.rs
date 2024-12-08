@@ -9,8 +9,8 @@ pub fn run() -> super::Runner {
 }
 
 // Answer: 2545
-fn part_1() -> u32 {
-    let mut sum = 0_u32;
+fn part_1() -> u64 {
+    let mut sum = 0_u64;
 
     'game: for (game_id, line) in INPUT.lines().enumerate() {
         let Some((_, line)) = line.split_once(": ") else {
@@ -35,15 +35,15 @@ fn part_1() -> u32 {
             }
         }
 
-        sum += game_id as u32 + 1;
+        sum += game_id as u64 + 1;
     }
 
     sum
 }
 
 // Answer: 78111
-fn part_2() -> u32 {
-    let mut sum = 0_u32;
+fn part_2() -> u64 {
+    let mut sum = 0_u64;
 
     for line in INPUT.lines() {
         let Some((_, line)) = line.split_once(": ") else {
@@ -72,7 +72,7 @@ fn part_2() -> u32 {
             }
         }
 
-        sum += max_r as u32 * max_g as u32 * max_b as u32;
+        sum += max_r as u64 * max_g as u64 * max_b as u64;
     }
 
     sum

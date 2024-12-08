@@ -20,7 +20,7 @@ pub fn run() -> super::Runner {
 }
 
 // Answer: 4982
-fn part_1() -> u32 {
+fn part_1() -> u64 {
     let mut idx = memchr(b'^', INPUT).expect("Invalid input");
     let mut distinct_positions = [0_u8; COL_LENGTH * ROW_LENGTH];
     let mut direction = 0_usize;
@@ -44,10 +44,10 @@ fn part_1() -> u32 {
     
     }
 
-    memchr_iter(1, &distinct_positions).count() as u32
+    memchr_iter(1, &distinct_positions).count() as u64
 }
 
 // Answer: ???
-fn part_2() -> u32 {
+fn part_2() -> u64 {
     0
 }

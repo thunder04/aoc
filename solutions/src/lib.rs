@@ -1,4 +1,4 @@
-#![feature(iter_map_windows, portable_simd, core_intrinsics)]
+#![feature(iter_map_windows, portable_simd, core_intrinsics, slice_as_chunks)]
 #![allow(internal_features, dead_code)]
 
 #[macro_use]

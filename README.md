@@ -1,6 +1,6 @@
-# Advert of Code (AoC) Solutions
+# Advent of Code (AoC) Solutions
 
-This repository contains my solutions to some of [Advert of Code](https://adventofcode.com/)'s problems.
+This repository contains my solutions to some of [Advent of Code](https://adventofcode.com/)'s problems.
 
 To run a solution, run the `cargo run <year> <day>` command on your terminal. A nightly compiler is required.
 

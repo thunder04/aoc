@@ -25,6 +25,8 @@ macro_rules! export_days {
     ($($day: ident $(: P1 == $p1_exp: expr)? $(, P2 == $p2_exp: expr )?)*) => {
         $(pub mod $day;)*
 
+        pub const ALL_DAYS: &[u8] = &[$($crate::day_to_number!($day),)*];
+
         pub fn run(days: Vec<u8>) -> eyre::Result<()> {
             use eyre::WrapErr as _;
 

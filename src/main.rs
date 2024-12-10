@@ -1,21 +1,25 @@
 #![feature(iterator_try_collect)]
 
+macro_rules! days {
+    ($year: ident, $_0th: expr, $args: expr) => {
+        match $args.peek().map(|x| &**x) {
+            Some("all") => aoc::$year::ALL_DAYS.to_vec(),
+            Some(_) => $args.map(|x| x.parse::<u8>()).try_collect::<Vec<_>>()?,
+            None => eyre::bail!("Usage: {} <year> <...days>", $_0th.unwrap()),
+        }
+    };
+}
+
 fn main() -> eyre::Result<()> {
     install_helpers()?;
 
-    let mut args = std::env::args();
+    let mut args = std::env::args().peekable();
     let _0th = args.next();
-    let year = args.next();
-    let days = args.map(|x| x.parse::<u8>()).try_collect::<Vec<_>>()?;
 
-    if year.is_none() || days.is_empty() {
-        eyre::bail!("Usage: {} <year> <...days>", _0th.unwrap());
-    } else {
-        match year.as_deref() {
-            Some("2024") => aoc::_2024::run(days),
-            Some("2023") => aoc::_2023::run(days),
-            _ => eyre::bail!("The year doesn't exist"),
-        }
+    match args.next().as_deref() {
+        Some("2024") => aoc::_2024::run(days!(_2024, _0th, args)),
+        Some("2023") => aoc::_2023::run(days!(_2023, _0th, args)),
+        _ => eyre::bail!("The year doesn't exist"),
     }
 }
 

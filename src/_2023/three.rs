@@ -1,16 +1,10 @@
 use std::collections::HashSet;
 
-static INPUT: &str = include_str!("./input.txt");
+pub fn part_1(input: &[u8]) -> i64 {
+    let input = unsafe { std::str::from_utf8_unchecked(input) };
+    let mut sum = 0;
 
-pub fn run() -> super::Runner {
-    (Some(part_1), Some(part_2))
-}
-
-// Answer: 526404
-fn part_1() -> u64 {
-    let mut sum = 0_u64;
-
-    let mut lines = INPUT.lines().enumerate().peekable();
+    let mut lines = input.lines().enumerate().peekable();
     // I assume there are no symbols in the first line.
     let mut prev_line = lines.next().expect("expected at least two lines");
     let mut added_numbers = HashSet::with_capacity(1 << 12);
@@ -54,7 +48,7 @@ fn part_1() -> u64 {
                             x = ""
                         );
 
-                        sum += simple_parse_digit(line, idxs) as u64;
+                        sum += simple_parse_digit(line, idxs) as i64;
                     }
                 }
             }
@@ -69,11 +63,11 @@ fn part_1() -> u64 {
     sum
 }
 
-// Answer: ???
-fn part_2() -> u64 {
-    let mut sum = 0_u64;
+pub fn part_2(input: &[u8]) -> i64 {
+    let input = unsafe { std::str::from_utf8_unchecked(input) };
+    let mut sum = 0;
 
-    let mut lines = INPUT.lines().enumerate().peekable();
+    let mut lines = input.lines().enumerate().peekable();
     // I assume there are no symbols in the first line.
     let mut prev_line = lines.next().expect("expected at least two lines");
     let mut added_numbers = HashSet::with_capacity(1 << 12);
@@ -121,9 +115,9 @@ fn part_2() -> u64 {
 
                         // This assumes the numbers in the input are never zero.
                         if first == 0 {
-                            first = simple_parse_digit(line, idxs) as u64;
+                            first = simple_parse_digit(line, idxs) as i64;
                         } else if second == 0 {
-                            second = simple_parse_digit(line, idxs) as u64;
+                            second = simple_parse_digit(line, idxs) as i64;
                         } else {
                             break;
                         }

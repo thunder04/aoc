@@ -3,18 +3,13 @@ use std::{
     simd::{num::SimdUint, u32x64, u8x64, usizex64},
 };
 
-static INPUT: &[u8] = include_bytes!("./input.txt");
 const AAA_NODE_ID: usize = 4276545;
 const ZZZ_NODE_ID: usize = 5921370;
 const RIGHT: u8 = b'R';
 const LEFT: u8 = b'L';
 
-pub fn run() -> super::Runner {
-    (Some(part_1), None)
-}
-
 // Answer: 23147
-fn part_1() -> u64 {
+pub fn part_1(input: &[u8]) -> i64 {
     // TODO Ideas: I don't really like a ~900μs execution time, how about:
     //  - Maintain a queue of "traverse operations" while you fill `nodes`?
     //  - SIMD accelerated line reading?
@@ -55,11 +50,6 @@ fn part_1() -> u64 {
             }
         }
     }
-}
-
-// Answer: ???
-pub fn part_2() -> u64 {
-    0
 }
 
 /// Reads three lines at once from input.

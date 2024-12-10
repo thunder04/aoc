@@ -1,18 +1,12 @@
-static INPUT: &str = include_str!("./input.txt");
-
 const MAX_R_CUBES: u8 = 12;
 const MAX_G_CUBES: u8 = 13;
 const MAX_B_CUBES: u8 = 14;
 
-pub fn run() -> super::Runner {
-    (Some(part_1), Some(part_2))
-}
+pub fn part_1(input: &[u8]) -> i64 {
+    let input = unsafe { std::str::from_utf8_unchecked(input) };
+    let mut sum = 0;
 
-// Answer: 2545
-fn part_1() -> u64 {
-    let mut sum = 0_u64;
-
-    'game: for (game_id, line) in INPUT.lines().enumerate() {
+    'game: for (game_id, line) in input.lines().enumerate() {
         let Some((_, line)) = line.split_once(": ") else {
             break;
         };
@@ -35,17 +29,17 @@ fn part_1() -> u64 {
             }
         }
 
-        sum += game_id as u64 + 1;
+        sum += game_id as i64 + 1;
     }
 
     sum
 }
 
-// Answer: 78111
-fn part_2() -> u64 {
-    let mut sum = 0_u64;
+pub fn part_2(input: &[u8]) -> i64 {
+    let input = unsafe { std::str::from_utf8_unchecked(input) };
+    let mut sum = 0;
 
-    for line in INPUT.lines() {
+    for line in input.lines() {
         let Some((_, line)) = line.split_once(": ") else {
             break;
         };
@@ -72,7 +66,7 @@ fn part_2() -> u64 {
             }
         }
 
-        sum += max_r as u64 * max_g as u64 * max_b as u64;
+        sum += max_r as i64 * max_g as i64 * max_b as i64;
     }
 
     sum

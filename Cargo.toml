@@ -1,20 +1,28 @@
-[workspace]
-resolver = "2"
-members = ["runner", "solutions"]
-default-members = ["runner"]
+[package]
+name = "aoc"
+version = "0.1.0"
+edition = "2021"
+publish = false
 
-[workspace.dependencies]
+[dependencies]
 # Logging crates
 tracing = "0.1.40"
-tracing-subscriber = { version = "0.3.18", features = ["parking_lot", "tracing-log"] }
+tracing-subscriber = { version = "0.3.18", features = [
+    "parking_lot",
+    "tracing-log",
+] }
 
 # Error handling crates
 thiserror = "1.0.63"
 color-eyre = "0.6.3"
 eyre = "0.6.12"
 
-# Misc. crates
+# Other crates
 memchr = "2.7.4"
+atoi_simd = "0.16.0"
+ahash = "0.8.11"
+regex = "1.11.1"
+easybench = "1.1.1"
 
 [profile.release]
 debug = true

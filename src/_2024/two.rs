@@ -2,21 +2,10 @@ use core::ops::RangeInclusive;
 
 use memchr::memchr;
 
-static INPUT: &[u8] = include_bytes!("./input.txt");
 const ACCEPTABLE_LEVEL_DIFF: RangeInclusive<i16> = -3..=3;
 
-pub fn run() -> super::Runner {
-    (Some(part_1), None)
-}
-
-// Answer: 213
-fn part_1() -> u64 {
-    answer_generator_v10000::<false>()
-}
-
-// Answer: ???
-fn part_2() -> u64 {
-    unimplemented!()
+pub fn part_1(input: &[u8]) -> i64 {
+    answer_generator_v10000::<false>(input)
 }
 
 /// The function implements the algorithm that solves the day's problems.
@@ -60,7 +49,7 @@ fn part_2() -> u64 {
 /// ## ALL GOOD
 /// Set `s.prev_prev_lvl` to `s.prev_lvl`. Set `s.prev_lvl` to `s.lvl`. Set `s.lvl` to `0`.
 /// Advance input by one. Go to [1].
-fn answer_generator_v10000<const IS_PART_2: bool>() -> u64 {
+fn answer_generator_v10000<const IS_PART_2: bool>(mut input: &[u8]) -> i64 {
     #[derive(Default)]
     struct State {
         saw_unsafe_lvl: bool,
@@ -88,8 +77,7 @@ fn answer_generator_v10000<const IS_PART_2: bool>() -> u64 {
     }
 
     let mut s = State::default();
-    let mut safe_reports = 0_u64;
-    let mut input = INPUT;
+    let mut safe_reports = 0_i64;
 
     loop {
         match input.first().copied() {

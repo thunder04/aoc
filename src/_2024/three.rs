@@ -2,37 +2,30 @@ use memchr::memmem::Finder;
 
 use crate::read_number_lazily;
 
-static INPUT: &[u8] = include_bytes!("./input.txt");
 const DONT_I: &[u8] = b"don't()";
 const MUL_I: &[u8] = b"mul(";
 const DO_I: &[u8] = b"do()";
 
-pub fn run() -> super::Runner {
-    (Some(part_1), Some(part_2))
-}
-
-// Answer: 170807108
-fn part_1() -> u64 {
+pub fn part_1(input: &[u8]) -> i64 {
     let mul_finder = Finder::new(MUL_I);
     let mut sum = 0;
 
-    for idx in mul_finder.find_iter(INPUT) {
-        let (a, next_offset) = read_number_lazily!(&INPUT[idx..], MUL_I.len(), b',');
-        let (b, _) = read_number_lazily!(&INPUT[idx..], next_offset + 1, b')');
+    for idx in mul_finder.find_iter(input) {
+        let (a, next_offset) = read_number_lazily!(&input[idx..], MUL_I.len(), b',');
+        let (b, _) = read_number_lazily!(&input[idx..], next_offset + 1, b')');
 
         sum += a * b;
     }
 
-    sum
+    sum as i64
 }
 
-// Answer: 74838033
-fn part_2() -> u64 {
+pub fn part_2(input: &[u8]) -> i64 {
     let dont_finder = Finder::new(DONT_I);
     let mul_finder = Finder::new(MUL_I);
     let do_finder = Finder::new(DO_I);
 
-    let mut input = INPUT;
+    let mut input = input;
     let mut sum = 0;
 
     loop {
@@ -53,5 +46,5 @@ fn part_2() -> u64 {
         }
     }
 
-    sum
+    sum as i64
 }

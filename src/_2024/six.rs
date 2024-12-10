@@ -1,6 +1,5 @@
 use memchr::{memchr, memchr_iter};
 
-static INPUT: &[u8] = include_bytes!("./input.txt");
 const COL_LENGTH: usize = 131;
 const ROW_LENGTH: usize = COL_LENGTH - 1;
 
@@ -15,13 +14,8 @@ const DIRECTIONS: [fn(usize) -> Option<usize>; 4] = [
     |idx| idx.checked_sub(1),
 ];
 
-pub fn run() -> super::Runner {
-    (Some(part_1), None)
-}
-
-// Answer: 4982
-fn part_1() -> u64 {
-    let mut idx = memchr(b'^', INPUT).expect("Invalid input");
+pub fn part_1(input: &[u8]) -> i64 {
+    let mut idx = memchr(b'^', input).expect("Invalid input");
     let mut distinct_positions = [0_u8; COL_LENGTH * ROW_LENGTH];
     let mut direction = 0_usize;
 
@@ -32,7 +26,7 @@ fn part_1() -> u64 {
             break;
         };
 
-        match INPUT[next_idx] {
+        match input[next_idx] {
             b'#' => direction = (direction + 1) % DIRECTIONS.len(),
 
             _ => {
@@ -40,14 +34,7 @@ fn part_1() -> u64 {
                 distinct_positions[idx] = 1;
             }
         }
-        
-    
     }
 
-    memchr_iter(1, &distinct_positions).count() as u64
-}
-
-// Answer: ???
-fn part_2() -> u64 {
-    0
+    memchr_iter(1, &distinct_positions).count() as i64
 }

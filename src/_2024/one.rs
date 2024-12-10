@@ -1,20 +1,14 @@
-use std::simd::{num::SimdUint, u64x64, u8x64};
+use std::simd::prelude::*;
 
-static INPUT: &[u8] = include_bytes!("./input.txt");
 const INPUT_LINES: usize = 10_000; // Optimistic amount of lines in the file.
 
-pub fn run() -> super::Runner {
-    (Some(part_1), Some(part_2))
-}
-
-// Answer: 2970687
-fn part_1() -> u64 {
-    let mut list_a = Vec::<u64>::with_capacity(INPUT_LINES);
-    let mut list_b = Vec::<u64>::with_capacity(INPUT_LINES);
-    let mut sum = 0;
+pub fn part_1(input: &[u8]) -> i64 {
+    let mut list_a = Vec::<i64>::with_capacity(INPUT_LINES);
+    let mut list_b = Vec::<i64>::with_capacity(INPUT_LINES);
+    let mut sum = 0_i64;
 
     #[rustfmt::skip]
-    read_lines(INPUT, |[(a1, b1), (a2, b2), (a3, b3), (a4, b4)]| {
+    read_lines(input, |[(a1, b1), (a2, b2), (a3, b3), (a4, b4)]| {
         list_a.push(a1); list_b.push(b1);
         list_a.push(a2); list_b.push(b2);
         list_a.push(a3); list_b.push(b3);
@@ -25,20 +19,19 @@ fn part_1() -> u64 {
     list_b.sort_unstable();
 
     while let (Some(a), Some(b)) = (list_a.pop(), list_b.pop()) {
-        sum += a.abs_diff(b);
+        sum += a.abs_diff(b) as i64;
     }
 
     sum
 }
 
-// Answer: 23963899
-fn part_2() -> u64 {
+pub fn part_2(input: &[u8]) -> i64 {
     // Try to use small numbers (e.g. u16) so it can fit in the L{1/2/3} cache.
     let mut counter = vec![0_u16; 99999 /* Biggest 5-digit number. */];
-    let mut nums = Vec::<u64>::with_capacity(INPUT_LINES);
+    let mut nums = Vec::<i64>::with_capacity(INPUT_LINES);
 
     #[rustfmt::skip]
-    read_lines(INPUT, |[(a1, b1), (a2, b2), (a3, b3), (a4, b4)]| {
+    read_lines(input, |[(a1, b1), (a2, b2), (a3, b3), (a4, b4)]| {
         nums.push(a1); counter[b1 as usize] += 1;
         nums.push(a2); counter[b2 as usize] += 1;
         nums.push(a3); counter[b3 as usize] += 1;
@@ -46,11 +39,11 @@ fn part_2() -> u64 {
     });
 
     nums.into_iter()
-        .map(|x| x * counter[x as usize] as u64)
+        .map(|x| x * counter[x as usize] as i64)
         .sum()
 }
 
-fn read_lines(mut input: &[u8], mut cb: impl FnMut([(u64, u64); 4])) {
+fn read_lines(mut input: &[u8], mut cb: impl FnMut([(i64, i64); 4])) {
     macro_rules! num_mask {
         (offset: $off: expr) => {
             const {
@@ -58,28 +51,28 @@ fn read_lines(mut input: &[u8], mut cb: impl FnMut([(u64, u64); 4])) {
                 let mut idx = 0;
 
                 while idx < 5 {
-                    array[$off + idx] = u64::MAX;
+                    array[$off + idx] = i64::MAX;
                     idx += 1;
                 }
 
-                u64x64::from_array(array)
+                i64x64::from_array(array)
             }
         };
     }
 
     const CHUNK_SIZE: usize = 55;
-    const NL: u64 = b'\n' as _;
-    const Z: u64 = b'0' as _;
-    const S: u64 = b' ' as _;
+    const NL: i64 = b'\n' as _;
+    const Z: i64 = b'0' as _;
+    const S: i64 = b' ' as _;
 
-    const E5: u64 = 10_000;
-    const E4: u64 = 1_000;
-    const E3: u64 = 100;
-    const E2: u64 = 10;
-    const E1: u64 = 1;
+    const E5: i64 = 10_000;
+    const E4: i64 = 1_000;
+    const E3: i64 = 100;
+    const E2: i64 = 10;
+    const E1: i64 = 1;
 
     #[rustfmt::skip]
-    const POWERS: u64x64 = u64x64::from_array([
+    const POWERS: i64x64 = i64x64::from_array([
         E5, E4, E3, E2, E1 /* N1 */, 0, 0, 0 /* whitespaces */, E5, E4, E3, E2, E1 /* N2 */, 0 /* newline */,
         E5, E4, E3, E2, E1 /* N3 */, 0, 0, 0 /* whitespaces */, E5, E4, E3, E2, E1 /* N4 */, 0 /* newline */,
         E5, E4, E3, E2, E1 /* N5 */, 0, 0, 0 /* whitespaces */, E5, E4, E3, E2, E1 /* N6 */, 0 /* newline */,
@@ -88,7 +81,7 @@ fn read_lines(mut input: &[u8], mut cb: impl FnMut([(u64, u64); 4])) {
     ]);
 
     #[rustfmt::skip]
-    const OFFSETS: u64x64 = u64x64::from_array([
+    const OFFSETS: i64x64 = i64x64::from_array([
         Z, Z, Z, Z, Z /* N1 */, S, S, S /* whitespaces */, Z, Z, Z, Z, Z /* N2 */, NL /* newline */,
         Z, Z, Z, Z, Z /* N3 */, S, S, S /* whitespaces */, Z, Z, Z, Z, Z /* N4 */, NL /* newline */,
         Z, Z, Z, Z, Z /* N5 */, S, S, S /* whitespaces */, Z, Z, Z, Z, Z /* N6 */, NL /* newline */,
@@ -96,18 +89,18 @@ fn read_lines(mut input: &[u8], mut cb: impl FnMut([(u64, u64); 4])) {
         0, 0, 0, 0, 0, 0, 0, 0,
     ]);
 
-    const A1: u64x64 = num_mask!(offset: 0);
-    const B1: u64x64 = num_mask!(offset: 8);
-    const A2: u64x64 = num_mask!(offset: 14);
-    const B2: u64x64 = num_mask!(offset: 22);
-    const A3: u64x64 = num_mask!(offset: 28);
-    const B3: u64x64 = num_mask!(offset: 36);
-    const A4: u64x64 = num_mask!(offset: 42);
-    const B4: u64x64 = num_mask!(offset: 50);
+    const A1: i64x64 = num_mask!(offset: 0);
+    const B1: i64x64 = num_mask!(offset: 8);
+    const A2: i64x64 = num_mask!(offset: 14);
+    const B2: i64x64 = num_mask!(offset: 22);
+    const A3: i64x64 = num_mask!(offset: 28);
+    const B3: i64x64 = num_mask!(offset: 36);
+    const A4: i64x64 = num_mask!(offset: 42);
+    const B4: i64x64 = num_mask!(offset: 50);
 
     loop {
         let (curr_chunk, next_chunk) = input.split_at(input.len().min(CHUNK_SIZE));
-        let lines: u64x64 = u8x64::load_or_default(curr_chunk).cast();
+        let lines: i64x64 = u8x64::load_or_default(curr_chunk).cast();
         let lines = (lines - OFFSETS) * POWERS;
 
         cb([

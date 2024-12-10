@@ -1,21 +1,27 @@
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+#![feature(iterator_try_collect)]
 
 fn main() -> eyre::Result<()> {
     install_helpers()?;
 
     let mut args = std::env::args();
+    let _0th = args.next();
+    let year = args.next();
+    let days = args.map(|x| x.parse::<u8>()).try_collect::<Vec<_>>()?;
 
-    match (args.next(), args.next().as_deref(), args.next()) {
-        (_, Some("2023"), Some(day)) => aoc_solutions::_2023::run(day.parse()?),
-        (_, Some("2024"), Some(day)) => aoc_solutions::_2024::run(day.parse()?),
-
-        (_, Some(_), Some(_)) => eyre::bail!("This year doesn't exist"),
-        (Some(zeroth), _, _) => eyre::bail!("Usage: {zeroth} <year> <day>"),
-        (None, _, _) => unreachable!(),
+    if year.is_none() || days.is_empty() {
+        eyre::bail!("Usage: {} <year> <...days>", _0th.unwrap());
+    } else {
+        match year.as_deref() {
+            Some("2024") => aoc::_2024::run(days),
+            Some("2023") => aoc::_2023::run(days),
+            _ => eyre::bail!("The year doesn't exist"),
+        }
     }
 }
 
 pub fn install_helpers() -> eyre::Result<()> {
+    use tracing_subscriber::{layer::SubscriberExt as _, util::SubscriberInitExt as _};
+
     let (panic_hook, eyre_hook) = color_eyre::config::HookBuilder::default().into_hooks();
     eyre_hook.install()?;
 

@@ -4,34 +4,19 @@ use specialized_ll::*;
 
 use crate::read_number_lazily;
 
-// static INPUT: &[u8] = b"\
-// 47|53\n97|13\n97|61\n97|47\n75|29\n61|13\n75|53
-// 29|13\n97|29\n53|29\n61|53\n97|53\n61|29\n47|13
-// 75|47\n97|75\n47|61\n75|61\n47|29\n75|13\n53|13
-
-// 75,47,61,53,29\n97,61,53,29,13\n75,29,13
-// 75,97,47,61,53\n61,13,29\n97,13,75,29,47\n";
-static INPUT: &[u8] = include_bytes!("./input.txt");
-
-const MAX_RULES_PER_NODE: usize = 32;
 const BIGGEST_NODE: usize = 99;
 
-pub fn run() -> super::Runner {
-    (Some(part_1), Some(part_2))
-}
+pub fn part_1(input: &[u8]) -> i64 {
+    let mut sum = 0;
 
-// Answer: 4689
-fn part_1() -> u64 {
-    let mut sum: u64 = 0;
-
-    parse_lines(|ll, buf, mut expected_rules: u128| {
+    parse_lines(input, |ll, buf, mut expected_rules: u128| {
         if buf.iter().all(|page| {
             // Remove the current page from the rules. A rule like "X | X" doesn't make sense.
             expected_rules &= !(1 << page);
 
             ll.contains_all_rules(*page, expected_rules)
         }) {
-            sum += buf[buf.len() / 2] as u64;
+            sum += buf[buf.len() / 2] as i64;
         }
     });
 
@@ -39,10 +24,10 @@ fn part_1() -> u64 {
 }
 
 // Answer: 6336
-fn part_2() -> u64 {
-    let mut sum: u64 = 0;
+pub fn part_2(input: &[u8]) -> i64 {
+    let mut sum = 0;
 
-    parse_lines(|ll, buf, mut expected_rules: u128| {
+    parse_lines(input, |ll, buf, mut expected_rules: u128| {
         for page in &*buf {
             expected_rules &= !(1 << page);
 
@@ -57,7 +42,7 @@ fn part_2() -> u64 {
                     }
                 });
 
-                sum += buf[buf.len() / 2] as u64;
+                sum += buf[buf.len() / 2] as i64;
 
                 break;
             }
@@ -67,10 +52,9 @@ fn part_2() -> u64 {
     sum
 }
 
-fn parse_lines(mut cb: impl FnMut(&SpecializedLinkedList, &mut [u8], u128)) {
+fn parse_lines(mut input: &[u8], mut cb: impl FnMut(&SpecializedLinkedList, &mut [u8], u128)) {
     let mut ll = SpecializedLinkedList::new();
     let mut buf = Vec::with_capacity(32);
-    let mut input = INPUT;
 
     // Read all rules from input.
     loop {

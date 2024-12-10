@@ -82,7 +82,7 @@ fn answer_generator_v10000<const IS_PART_2: bool>(mut input: &[u8]) -> i64 {
     loop {
         match input.first().copied() {
             Some(ch @ b'0'..=b'9') => {
-                s.lvl = (s.lvl * 10) + (ch - b'0') as u16;
+                s.lvl = (s.lvl * 10) + (ch & 0x0f) as u16;
                 input = &input[1..];
                 continue;
             }

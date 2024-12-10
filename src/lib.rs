@@ -1,5 +1,11 @@
-#![feature(iter_map_windows, portable_simd, core_intrinsics, slice_as_chunks)]
 #![allow(internal_features)]
+#![feature(
+    iter_map_windows,
+    portable_simd,
+    slice_as_chunks,
+    stdarch_x86_avx512,
+    core_intrinsics
+)]
 
 #[macro_use]
 extern crate tracing;
@@ -53,10 +59,11 @@ macro_rules! export_days {
 
                             if result == $p1_exp {
                                 info!(target: "aoc", "[Year {year}] [Day {day}] Part 1: {result} == {}", $p1_exp);
-                                debug!(target: "aoc", "{}", easybench::bench(|| $day::part_1(input)));
                             } else {
                                 warn!(target: "aoc", "[Year {year}] [Day {day}] Part 1: {result} != {}", $p1_exp);
                             }
+
+                            debug!(target: "aoc", "{}", easybench::bench(|| $day::part_1(input)));
                         )?
 
                         $(
@@ -64,10 +71,11 @@ macro_rules! export_days {
 
                             if result == $p2_exp {
                                 info!(target: "aoc", "[Year {year}] [Day {day}] Part 2: {result} == {}", $p2_exp);
-                                debug!(target: "aoc", "{}", easybench::bench(|| $day::part_2(input)));
                             } else {
                                 warn!(target: "aoc", "[Year {year}] [Day {day}] Part 2: {result} != {}", $p2_exp);
                             }
+
+                            debug!(target: "aoc", "{}", easybench::bench(|| $day::part_2(input)));
                         )?
                     })*
 

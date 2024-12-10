@@ -13,6 +13,13 @@ macro_rules! days {
 fn main() -> eyre::Result<()> {
     install_helpers()?;
 
+    if !is_x86_feature_detected!("avx512f")
+        || !is_x86_feature_detected!("avx")
+        || !is_x86_feature_detected!("sse")
+    {
+        eyre::bail!("Missing instruction sets");
+    }
+
     let mut args = std::env::args().peekable();
     let _0th = args.next();
 

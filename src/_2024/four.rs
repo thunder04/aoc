@@ -2,7 +2,7 @@
 
 use memchr::memchr_iter;
 
-const COL_LEN: usize = 140; // Unlike other days, this IS the amount of lines in the input.
+const COL_LEN: usize = 140;
 const ROW_LEN: usize = 140 + 1 /* Account for the trailing newline */;
 
 pub fn part_1(input: &[u8]) -> i64 {

@@ -1,20 +1,21 @@
 use std::cmp::Ordering;
 
-use specialized_ll::*;
+use atoi_simd::parse_any_pos as atoi;
 
-use crate::read_number_lazily;
+type Rules = [u128; BIGGEST_NODE];
 
 const BIGGEST_NODE: usize = 99;
 
 pub fn part_1(input: &[u8]) -> i64 {
     let mut sum = 0;
 
-    parse_lines(input, |ll, buf, mut expected_rules: u128| {
+    parse_lines(input, |rules, buf, mut expected_rules: u128| {
         if buf.iter().all(|page| {
-            // Remove the current page from the rules. A rule like "X | X" doesn't make sense.
+            // Remove the current page from the rules.
+            // A rule like "X | X" doesn't make sense.
             expected_rules &= !(1 << page);
 
-            ll.contains_all_rules(*page, expected_rules)
+            contains_all_rules(rules, *page, expected_rules)
         }) {
             sum += buf[buf.len() / 2] as i64;
         }
@@ -27,15 +28,15 @@ pub fn part_1(input: &[u8]) -> i64 {
 pub fn part_2(input: &[u8]) -> i64 {
     let mut sum = 0;
 
-    parse_lines(input, |ll, buf, mut expected_rules: u128| {
+    parse_lines(input, |rules, buf, mut expected_rules: u128| {
         for page in &*buf {
             expected_rules &= !(1 << page);
 
-            if !ll.contains_all_rules(*page, expected_rules) {
+            if !contains_all_rules(rules, *page, expected_rules) {
                 buf.sort_by(|a, b| {
-                    if ll.contains_all_rules(*a, 1 << b) {
+                    if contains_all_rules(rules, *a, 1 << b) {
                         Ordering::Less
-                    } else if ll.contains_all_rules(*b, 1 << a) {
+                    } else if contains_all_rules(rules, *b, 1 << a) {
                         Ordering::Greater
                     } else {
                         Ordering::Equal
@@ -52,26 +53,40 @@ pub fn part_2(input: &[u8]) -> i64 {
     sum
 }
 
-fn parse_lines(mut input: &[u8], mut cb: impl FnMut(&SpecializedLinkedList, &mut [u8], u128)) {
-    let mut ll = SpecializedLinkedList::new();
+fn parse_lines(mut input: &[u8], mut cb: impl FnMut(&Rules, &mut [u8], u128)) {
+    let mut rules: Rules = [0_u128; BIGGEST_NODE];
     let mut buf = Vec::with_capacity(32);
 
     // Read all rules from input.
     loop {
-        let (node, off_a) = read_number_lazily!(input, 0, b'|', {
-            input = &input[1..]; // Matching should've failed at the empty newline. Go to the next line.
+        // let node =
+        //     unsafe { input.get_unchecked(0) & 0xf } * 10 + unsafe { input.get_unchecked(1) & 0xf
+        // };
+
+        // Why do I even check this? A pipe should be next.
+        // if unsafe { *input.get_unchecked(2) } == b'\n' {
+        //     input = unsafe { input.get_unchecked(1..) };
+        //     break;
+        // }
+
+        let Ok((node, _)) = atoi::<u8>(input) else {
+            input = unsafe { input.get_unchecked(1..) };
+
             break;
-        });
+        };
 
-        let (rule, off_b) = read_number_lazily!(input, off_a + 1, b'\n', {
-            unreachable!("Invalid input");
-        });
+        input = unsafe { input.get_unchecked(3..) };
 
-        debug_assert_ne!(node, 0); // The code doesn't expect 0 integers.
-        debug_assert_ne!(rule, 0); // The code doesn't expect 0 integers.
+        let (rule, _) = atoi::<u8>(input).unwrap();
+        // let rule =
+        // unsafe { input.get_unchecked(0) & 0xf } * 10 + unsafe { input.get_unchecked(1) & 0xf };
 
-        ll.add_rule(node as u8, rule as u8);
-        input = &input[off_b + 1..];
+        debug_assert!(rule < BIGGEST_NODE as u8);
+        debug_assert_ne!(node, 0);
+        debug_assert_ne!(rule, 0);
+
+        input = unsafe { input.get_unchecked(3..) };
+        rules[node as usize] |= 1 << rule;
     }
 
     loop {
@@ -79,21 +94,19 @@ fn parse_lines(mut input: &[u8], mut cb: impl FnMut(&SpecializedLinkedList, &mut
 
         // Store comma separated numbers to `buf`.
         loop {
-            let (a, off_a) = read_number_lazily!(input, 0, b',' | b'\n', {
-                unreachable!("Invalid input");
-            });
-            let matched_char = input[off_a];
+            let (rule, off) = atoi::<u8>(input).unwrap();
+            let matched = input[off];
 
-            input = &input[off_a + 1..];
-            expected_rules |= 1 << a;
-            buf.push(a as u8);
+            expected_rules |= 1 << rule;
+            input = &input[off + 1..];
+            buf.push(rule);
 
-            if matched_char == b'\n' {
+            if matched == b'\n' {
                 break;
             }
         }
 
-        cb(&ll, &mut buf, expected_rules);
+        cb(&rules, &mut buf, expected_rules);
 
         if input.is_empty() {
             break;
@@ -103,57 +116,7 @@ fn parse_lines(mut input: &[u8], mut cb: impl FnMut(&SpecializedLinkedList, &mut
     }
 }
 
-mod specialized_ll {
-    use super::BIGGEST_NODE;
-
-    // TODO: After you are done with the day. Store [u8; MAX_RULES_PER_NODE] as a u128 bitmask,
-    // since max node number ID can be 100.
-    pub struct SpecializedLinkedList([u128; BIGGEST_NODE]);
-
-    impl SpecializedLinkedList {
-        #[inline(always)]
-        pub const fn new() -> Self {
-            Self([0; BIGGEST_NODE])
-        }
-
-        /// Add a new rule for node.
-        #[inline(always)]
-        pub const fn add_rule(&mut self, node: u8, rule: u8) {
-            assert!(rule < u128::BITS as u8);
-
-            self.0[node as usize] |= 1 << rule;
-        }
-
-        /// Obtain all rules of a node.
-        #[inline(always)]
-        pub const fn rules_of(&self, node: u8) -> u128 {
-            self.0[node as usize]
-        }
-
-        /// Ensures a node contains all rules specified by the `rules` bitmask.
-        #[inline(always)]
-        pub const fn contains_all_rules(&self, node: u8, rules: u128) -> bool {
-            (self.rules_of(node) & rules) == rules
-        }
-    }
-
-    #[cfg(test)]
-    mod tests {
-        use super::*;
-
-        #[test]
-        fn basic_usage() {
-            let mut ll = SpecializedLinkedList::new();
-
-            ll.add_rule(75, 29);
-            ll.add_rule(75, 13);
-            ll.add_rule(75, 1); // Extra rule.
-
-            ll.add_rule(10, 29);
-            ll.add_rule(10, 13);
-
-            assert!(ll.contains_all_rules(75, ll.rules_of(10)));
-            assert!(!ll.contains_all_rules(10, ll.rules_of(75)));
-        }
-    }
+#[inline(always)]
+const fn contains_all_rules(rules: &Rules, node: u8, expected: u128) -> bool {
+    (rules[node as usize] & expected) == expected
 }

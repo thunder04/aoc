@@ -1,4 +1,3 @@
-use core::panic;
 use std::ptr::slice_from_raw_parts;
 
 use atoi_simd::parse_any_pos as atoi;

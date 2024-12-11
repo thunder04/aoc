@@ -31,17 +31,6 @@ pub fn part_1(mut input: &[u8]) -> i64 {
     let digit_mask: __m512i = u8x64::splat(0xF).into();
     let newline = u8x64::splat(0x0A);
 
-    // Store up to 64 heights¹ per row. We know the lowest four bits correspond to the digits
-    // themselves. We know `\n`'s is 0b1010 (0xA, 10); We use that for "out of bounds" checking.
-    //
-    // The elements have a logical order, that is:
-    // - map[0][0..4] is the first element
-    // - map[0][4..8] is the second element
-    // - ...and so forth.
-    //
-    // ¹ 128b / 4b = 32 elements * 2 = 64 elements.
-    // A line full of newlines will simplify the checks for going up (+ 1).
-    // Another line at the end will simplify the checks for going down (+ 2).
     let mut map = [u8x64::splat(0x0A); COL_LEN + 2];
     let mut map_len = 1;
     let mut sum = 0;

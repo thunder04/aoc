@@ -21,6 +21,7 @@ memchr = "2.7.4"
 atoi_simd = "0.16.0"
 ahash = "0.8.11"
 regex = "1.11.1"
+arrayvec = "0.7.6"
 
 [profile.dev]
 opt-level = 2

@@ -16,8 +16,10 @@ pub mod utils;
 
 #[macro_export]
 macro_rules! export_days {
-    ($($day: ident $(: P1 == $p1_exp: expr)? $(, P2 == $p2_exp: expr )?)*) => {
+    ($($day: ident $(: P1 == $p1_exp: literal)? $(, P2 == $p2_exp: literal )? $([ bench = $bench: literal ])?)*) => {
         $(pub mod $day;)*
+
+        use std::fmt::Display;
 
         // Remove the leading underscore in a cool way.
         pub const ALL_DAYS: &[&str] = &[$(const {
@@ -30,6 +32,7 @@ macro_rules! export_days {
         }, )*];
 
         pub fn run(days: Vec<impl Into<String>>) -> eyre::Result<()> {
+            use color_eyre::owo_colors::OwoColorize as _;
             use eyre::WrapErr as _;
 
             for day in days {
@@ -40,40 +43,48 @@ macro_rules! export_days {
                         let year = module_path!().split("::").nth(1).unwrap().trim_start_matches('_');
                         let path = format!("inputs/{year}/{day}.txt");
                         let input = &std::fs::read(&path).wrap_err_with(|| format!("Failed to read file \"{path}\""))?;
+                        let prefix = eye_candy_prefix(year, day);
 
                         if input.is_empty() {
-                            error!(target: "aoc", "[Year {year}] [Day {day}] Input file is empty. Skipping!");
+                            error!(target: "aoc", "{prefix} Input file is empty. Skipping!");
                             continue;
                         } else if std::str::from_utf8(input).is_err() {
-                            error!(target: "aoc", "[Year {year}] [Day {day}] Input file must be valid UTF-8. Skipping!");
+                            error!(target: "aoc", "{prefix} Input file must be valid UTF-8. Skipping!");
                             continue;
                         } else if input[input.len() - 1] != b'\n' {
-                            error!(target: "aoc", "[Year {year}] [Day {day}] Input file must end with a trailing newline. Skipping!");
+                            error!(target: "aoc", "{prefix} Input file must end with a trailing newline. Skipping!");
                             continue;
                         }
+
+                        #[allow(unused_mut)]
+                        let mut bench = true; $(if !$bench { bench = false; })?
 
                         $(
                             let result = $day::part_1(input);
 
                             if result == $p1_exp {
-                                info!(target: "aoc", "[Year {year}] [Day {day}] Part 1: {result} == {}", $p1_exp);
+                                info!(target: "aoc", "{prefix} Part 1: {} == {}", result.bold(), $p1_exp.dimmed());
                             } else {
-                                warn!(target: "aoc", "[Year {year}] [Day {day}] Part 1: {result} != {}", $p1_exp);
+                                warn!(target: "aoc", "{prefix} Part 1: {} != {}", result.bold(), $p1_exp.dimmed());
                             }
 
-                            debug!(target: "aoc", "{}", easybench::bench(|| $day::part_1(input)));
+                            if bench {
+                                info!(target: "aoc", "{}", easybench::bench(|| $day::part_1(input)));
+                            }
                         )?
 
                         $(
                             let result = $day::part_2(input);
 
                             if result == $p2_exp {
-                                info!(target: "aoc", "[Year {year}] [Day {day}] Part 2: {result} == {}", $p2_exp);
+                                info!(target: "aoc", "{prefix} Part 2: {} == {}", result.bold(), $p2_exp.dimmed());
                             } else {
-                                warn!(target: "aoc", "[Year {year}] [Day {day}] Part 2: {result} != {}", $p2_exp);
+                                warn!(target: "aoc", "{prefix} Part 2: {} != {}", result.bold(), $p2_exp.dimmed());
                             }
 
-                            debug!(target: "aoc", "{}", easybench::bench(|| $day::part_2(input)));
+                            if bench {
+                                info!(target: "aoc", "{}", easybench::bench(|| $day::part_2(input)));
+                            }
                         )?
                     })*
 
@@ -84,6 +95,20 @@ macro_rules! export_days {
             }
 
             Ok(())
+        }
+
+        fn eye_candy_prefix(year: impl Display, day: impl Display) -> impl Display {
+            use color_eyre::owo_colors::{OwoColorize as _, Rgb};
+
+            const BG: Rgb = Rgb(16, 16, 35);
+
+            let day = format!("[Day {day}]");
+            let year = format!("[Year {year}]");
+
+            let day = day.color(Rgb(255, 255, 100)).on_color(BG);
+            let year = year.color(Rgb(2, 183, 5)).on_color(BG);
+
+            format!("{year} {day}").bold().to_string()
         }
     };
 }

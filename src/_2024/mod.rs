@@ -7,4 +7,5 @@ crate::export_days! {
     six: P1 == 4982
     seven: P1 == 7885693428401_i64
     // ten: P1 == 36
+    thirteen: P1 == 36571, P2 == 85527711500010_i64
 }

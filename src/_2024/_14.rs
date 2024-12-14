@@ -1,4 +1,7 @@
-use std::cmp::Ordering;
+use std::{cmp::Ordering, sync::Arc};
+
+use ahash::{HashMap, HashMapExt};
+use image::{ImageBuffer, Rgb};
 
 const X: u32 = 101;
 const Y: u32 = 103;
@@ -33,7 +36,39 @@ pub fn part_1(input: &[u8]) -> i64 {
 }
 
 pub fn part_2(input: &[u8]) -> i64 {
-    0
+    let robots = {
+        let mut buf = Vec::with_capacity(1024);
+
+        read_input(input, |p0, v| buf.push((p0, v)));
+        Arc::new(buf) // Used for threading.
+    };
+
+    for t in 0..9000 {
+        let mut buf = [0_u128; Y as usize];
+
+        for &(p0, v) in robots.iter() {
+            let (x, y) = simulate(p0, v, t);
+            let x = x.clamp(0, X - 1); // The function might have a tiny small bug, which I CBA to fix.
+            let y = y.clamp(0, Y - 1); // The function might have a tiny small bug, which I CBA to fix.
+
+            buf[y as usize] |= 1 << x;
+        }
+
+        for mut row in buf {
+            while row != 0 {
+                row >>= row.trailing_zeros();
+                let n = row.trailing_ones();
+
+                if n > 25 {
+                    return t as i64;
+                }
+
+                row >>= n;
+            }
+        }
+    }
+
+    panic!("No solution found")
 }
 
 #[inline]

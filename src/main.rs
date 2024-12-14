@@ -44,6 +44,7 @@ pub fn install_helpers() -> eyre::Result<()> {
 
     let stderr_logs = tracing_subscriber::fmt::layer()
         .with_writer(std::io::stderr)
+        .without_time()
         .with_ansi(true); // The developers (me) view these logs, and I want to have colors 😊
 
     tracing_subscriber::registry().with(stderr_logs).init();

@@ -3,8 +3,11 @@
 macro_rules! days {
     ($year: ident, $_0th: expr, $args: expr) => {
         match $args.peek().map(|x| &**x) {
-            Some("all") => aoc::$year::ALL_DAYS.to_vec(),
-            Some(_) => $args.map(|x| x.parse::<u8>()).try_collect::<Vec<_>>()?,
+            Some("all") => aoc::$year::ALL_DAYS
+                .iter()
+                .map(|s| s.to_string())
+                .collect::<Vec<_>>(),
+            Some(_) => $args.filter(|x| x.parse::<u8>().is_ok()).collect(),
             None => eyre::bail!("Usage: {} <year> <...days>", $_0th.unwrap()),
         }
     };

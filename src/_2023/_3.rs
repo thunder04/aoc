@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use ahash::{HashSet, HashSetExt};
 
 pub fn part_1(input: &[u8]) -> i64 {
     let input = unsafe { std::str::from_utf8_unchecked(input) };

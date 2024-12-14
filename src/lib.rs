@@ -14,31 +14,29 @@ pub mod _2023;
 pub mod _2024;
 pub mod utils;
 
-#[rustfmt::skip]
-macro_rules! day_to_number {
-    (one) => { 1 }; (two) => { 2 }; (three) => { 3 }; (four) => { 4 }; (five) => { 5 }; (six) => { 6 };
-    (seven) => { 7 }; (eight) => { 8 }; (nine) => { 9 }; (ten) => { 10 }; (eleven) => { 11 }; (twelve) => { 12 };
-    (thirteen) => { 13 }; (fourteen) => { 14 }; (fifteen) => { 15 }; (sixteen) => { 16 }; (seventeen) => { 17 }; (eighteen) => { 18 };
-    (nineteen) => { 19 }; (twenty) => { 20 }; (twenty_one) => { 21 }; (twenty_two) => { 22 }; (twenty_three) => { 23 }; (twenty_four) => { 24 };
-    (twenty_five) => { 25 }; (twenty_six) => { 26 }; (twenty_seven) => { 27 }; (twenty_eight) => { 28 }; (twenty_nine) => { 29 }; (thirty) => { 30 };
-    (thirty_one) => { 31 };
-}
-
-pub(crate) use day_to_number;
-
 #[macro_export]
 macro_rules! export_days {
     ($($day: ident $(: P1 == $p1_exp: expr)? $(, P2 == $p2_exp: expr )?)*) => {
         $(pub mod $day;)*
 
-        pub const ALL_DAYS: &[u8] = &[$($crate::day_to_number!($day),)*];
+        // Remove the leading underscore in a cool way.
+        pub const ALL_DAYS: &[&str] = &[$(const {
+            unsafe {
+                let d = stringify!($day);
+                let d = core::slice::from_raw_parts(d.as_ptr().add(1), d.len() - 1);
 
-        pub fn run(days: Vec<u8>) -> eyre::Result<()> {
+                std::str::from_utf8_unchecked(d)
+            }
+        }, )*];
+
+        pub fn run(days: Vec<impl Into<String>>) -> eyre::Result<()> {
             use eyre::WrapErr as _;
 
             for day in days {
+                let day = day.into();
+
                 match day {
-                    $(_ if day == $crate::day_to_number!($day) => {
+                    $(_ if day == stringify!($day).trim_start_matches('_') => {
                         let year = module_path!().split("::").nth(1).unwrap().trim_start_matches('_');
                         let path = format!("inputs/{year}/{day}.txt");
                         let input = &std::fs::read(&path).wrap_err_with(|| format!("Failed to read file \"{path}\""))?;

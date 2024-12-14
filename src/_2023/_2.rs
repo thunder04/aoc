@@ -16,7 +16,6 @@ pub fn part_1(input: &[u8]) -> i64 {
                 let Some((num, color)) = cubes.split_once(" ") else {
                     break;
                 };
-
                 let num: u8 = num.parse().unwrap();
 
                 match color {

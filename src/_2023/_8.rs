@@ -10,12 +10,7 @@ const LEFT: u8 = b'L';
 
 // Answer: 23147
 pub fn part_1(input: &[u8]) -> i64 {
-    // TODO Ideas: I don't really like a ~900μs execution time, how about:
-    //  - Maintain a queue of "traverse operations" while you fill `nodes`?
-    //  - SIMD accelerated line reading?
-    //    - Remove invalid lines (last potentially empty line and first two) before looping
-
-    let mut lines = INPUT.splitn(3, |&x| x == b'\n');
+    let mut lines = input.splitn(3, |&x| x == b'\n');
     let mut nodes = vec![(0_usize, 0_usize); ZZZ_NODE_ID + 1];
     let directions = lines.next().expect("No directions");
 

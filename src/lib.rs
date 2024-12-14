@@ -19,15 +19,18 @@ macro_rules! export_days {
     ($($day: ident $(: P1 == $p1_exp: literal)? $(, P2 == $p2_exp: literal )? $([ bench = $bench: literal ])?)*) => {
         $(pub mod $day;)*
 
+        use std::{slice::from_raw_parts, str::from_utf8_unchecked};
         use std::fmt::Display;
 
-        // Remove the leading underscore in a cool way.
         pub const ALL_DAYS: &[&str] = &[$(const {
             unsafe {
-                let d = stringify!($day);
-                let d = core::slice::from_raw_parts(d.as_ptr().add(1), d.len() - 1);
+                let d = stringify!($day).as_bytes();
 
-                std::str::from_utf8_unchecked(d)
+                if d[1] == b'0' {
+                    from_utf8_unchecked(from_raw_parts(d.as_ptr().add(2), d.len() - 2))
+                } else {
+                    from_utf8_unchecked(from_raw_parts(d.as_ptr().add(1), d.len() - 1))
+                }
             }
         }, )*];
 
@@ -39,9 +42,9 @@ macro_rules! export_days {
                 let day = day.into();
 
                 match day {
-                    $(_ if day == stringify!($day).trim_start_matches('_') => {
+                    $(_ if day == stringify!($day).trim_start_matches(|x| x == '_' || x == '0') => {
                         let year = module_path!().split("::").nth(1).unwrap().trim_start_matches('_');
-                        let path = format!("inputs/{year}/{day}.txt");
+                        let path = format!("inputs/{year}/{}.txt", stringify!($day).trim_start_matches(|x| x == '_'));
                         let input = &std::fs::read(&path).wrap_err_with(|| format!("Failed to read file \"{path}\""))?;
                         let prefix = eye_candy_prefix(year, day);
 

@@ -19,8 +19,9 @@ macro_rules! export_days {
     ($($day: ident $(: P1 == $p1_exp: literal)? $(, P2 == $p2_exp: literal )? $([ bench = $bench: literal ])?)*) => {
         $(pub mod $day;)*
 
-        use std::{slice::from_raw_parts, str::from_utf8_unchecked};
-        use std::fmt::Display;
+        use std::{slice::from_raw_parts, str::from_utf8_unchecked, fmt::Display};
+        use color_eyre::owo_colors::OwoColorize as _;
+        use eyre::WrapErr as _;
 
         pub const ALL_DAYS: &[&str] = &[$(const {
             unsafe {
@@ -35,32 +36,20 @@ macro_rules! export_days {
         }, )*];
 
         pub fn run(days: Vec<impl Into<String>>) -> eyre::Result<()> {
-            use color_eyre::owo_colors::OwoColorize as _;
-            use eyre::WrapErr as _;
-
             for day in days {
                 let day = day.into();
 
                 match day {
                     $(_ if day == stringify!($day).trim_start_matches(|x| x == '_' || x == '0') => {
                         let year = module_path!().split("::").nth(1).unwrap().trim_start_matches('_');
-                        let path = format!("inputs/{year}/{}.txt", stringify!($day).trim_start_matches(|x| x == '_'));
-                        let input = &std::fs::read(&path).wrap_err_with(|| format!("Failed to read file \"{path}\""))?;
+                        let day = stringify!($day).trim_start_matches(|x| x == '_');
                         let prefix = eye_candy_prefix(year, day);
-
-                        if input.is_empty() {
-                            error!(target: "aoc", "{prefix} Input file is empty. Skipping!");
-                            continue;
-                        } else if std::str::from_utf8(input).is_err() {
-                            error!(target: "aoc", "{prefix} Input file must be valid UTF-8. Skipping!");
-                            continue;
-                        } else if input[input.len() - 1] != b'\n' {
-                            error!(target: "aoc", "{prefix} Input file must end with a trailing newline. Skipping!");
-                            continue;
-                        }
 
                         #[allow(unused_mut)]
                         let mut bench = true; $(if !$bench { bench = false; })?
+                        let Some(input) = &read_input(year, day, &prefix)? else {
+                            continue;
+                        };
 
                         $(
                             let result = $day::part_1(input);
@@ -98,6 +87,25 @@ macro_rules! export_days {
             }
 
             Ok(())
+        }
+
+        fn read_input(year: &str, day: &str, prefix: &impl Display) -> eyre::Result<Option<Vec<u8>>> {
+            let path = format!("inputs/{year}/{day}.txt");
+            let input = std::fs::read(&path).wrap_err_with(|| format!("Failed to read input file \"{path}\""))?;
+
+            if input.is_empty() {
+                error!(target: "aoc", "{prefix} Input file is empty. Skipping!");
+            } else if std::str::from_utf8(&input).is_err() {
+                error!(target: "aoc", "{prefix} Input file must be valid UTF-8. Skipping!");
+            } else if input[input.len() - 1] != b'\n' {
+                error!(target: "aoc", "{prefix} Input file must end with a trailing newline. Skipping!");
+            } else if &input[input.len() - 2..input.len() - 1] == b"\r\n" {
+                error!(target: "aoc", "{prefix} Input file must have LF end-of-line, not CRLF. Skipping!");
+            } else {
+                return Ok(Some(input));
+            }
+
+            Ok(None)
         }
 
         fn eye_candy_prefix(year: impl Display, day: impl Display) -> impl Display {
